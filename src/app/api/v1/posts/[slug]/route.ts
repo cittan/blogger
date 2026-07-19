@@ -7,14 +7,15 @@ export const runtime = 'edge'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await params
   const { env } = getRequestContext()
   const repo = new PostsRepository((env as any).DB)
   const service = new PostsService(repo)
 
   try {
-    const post = await service.getPost(params.slug)
+    const post = await service.getPost(slug)
     if (!post) {
       return NextResponse.json(
         { success: false, error: { code: 'NOT_FOUND', message: '文章不存在' } },

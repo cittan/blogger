@@ -2,9 +2,10 @@
 
 import { PostEditor } from '@/components/dashboard/PostEditor'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, use } from 'react'
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
+export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
 
@@ -14,7 +15,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       await fetch('/api/v1/admin/posts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: params.id, ...data }),
+        body: JSON.stringify({ slug: id, ...data }),
       })
       router.push('/admin/posts')
     } finally {

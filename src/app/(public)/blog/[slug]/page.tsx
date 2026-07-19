@@ -7,16 +7,16 @@ import { formatDateWithDot } from '@/utils/date'
 import type { Metadata } from 'next'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return {
-    title: params.slug,
-  }
+  const { slug } = await params
+  return { title: slug }
 }
 
-export default function PostPage({ params }: Props) {
+export default async function PostPage({ params }: Props) {
+  const { slug } = await params
   return (
     <>
       <ProgressBar />
