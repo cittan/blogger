@@ -2,10 +2,11 @@
 
 import { PostCard, PostCardSkeleton } from '@/components/blog/PostCard'
 import { useEssays } from '@/hooks/useApi'
+import { Essay } from '@/types'
 
 export default function EssaysPage() {
   const { data, isLoading, isError } = useEssays()
-  const essays = data ?? []
+  const essays = data?.items ?? []
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -26,7 +27,7 @@ export default function EssaysPage() {
         ) : essays.length === 0 ? (
           <p className="text-sm text-text-secondary">还没有杂谈。</p>
         ) : (
-          essays.map((essay) => (
+          essays.map((essay: Essay) => (
             <PostCard
               key={essay.id}
               post={{
