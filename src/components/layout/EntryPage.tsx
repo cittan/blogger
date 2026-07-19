@@ -3,7 +3,6 @@
 import { useRef } from 'react'
 import Link from 'next/link'
 import { useCursorEffect } from '@/hooks/useCursorEffect'
-import { Particles } from './Particles'
 
 export function EntryPage() {
   const avatarRef = useRef<HTMLDivElement>(null)
@@ -18,17 +17,14 @@ export function EntryPage() {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      {/* Background warm glow */}
+      {/* Central warm glow on entry page */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at center, rgba(230, 180, 80, 0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse at center, rgba(230, 180, 80, 0.08) 0%, rgba(212, 116, 92, 0.03) 40%, transparent 70%)',
         }}
       />
-
-      {/* Particles */}
-      <Particles />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-6">

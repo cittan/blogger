@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { LayoutShell } from '@/components/layout/LayoutShell'
+import { BackgroundEffects } from '@/components/layout/BackgroundEffects'
 import { Providers } from './providers'
 import './global.css'
 
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body>
         <Providers>
+          <BackgroundEffects />
           <LayoutShell>{children}</LayoutShell>
         </Providers>
       </body>
