@@ -5,8 +5,6 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.cloudflareimages.com' },
     ],
   },
-  experimental: {
-    serverActions: true,
-  },
 }
+
 module.exports = nextConfig

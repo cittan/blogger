@@ -43,8 +43,9 @@ export async function PUT(request: NextRequest) {
   const service = new PostsService(repo)
 
   try {
-    const body = await request.json()
-    const { slug, ...data } = body
+    const body = (await request.json()) as Record<string, unknown>
+    const slug = body.slug as string | undefined
+    const { slug: _s, ...data } = body
     if (!slug) {
       return NextResponse.json(
         { success: false, error: { code: 'VALIDATION', message: '缺少 slug' } },
