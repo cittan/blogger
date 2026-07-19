@@ -67,102 +67,33 @@
   }
 }
 
-/* ── Entry page avatar glitch animations ── */
-@keyframes glitch-skew {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-3px); }
-  20% { transform: translateX(3px); }
-  30% { transform: translateX(-1px); }
-  40% { transform: translateX(2px); }
-  50% { transform: translateX(-2px); }
-  60% { transform: translateX(1px); }
-  70% { transform: translateX(-1px); }
-  80% { transform: translateX(2px); }
-  90% { transform: translateX(-3px); }
+/* ── Entry page avatar enter animation ── */
+/*
+ * Pixelate + Grayscale→Color combined:
+ *   blur() + high contrast() creates a thresholding effect
+ *   that looks like pixel blocks resolving into focus,
+ *   while saturate() transitions from grayscale to full color.
+ */
+@keyframes avatar-enter {
+  0% {
+    filter: blur(7px) contrast(2.5) saturate(0) brightness(1.2);
+  }
+  25% {
+    filter: blur(5px) contrast(2.2) saturate(0) brightness(1.15);
+  }
+  55% {
+    filter: blur(2.5px) contrast(1.6) saturate(0.35) brightness(1.08);
+  }
+  80% {
+    filter: blur(0.8px) contrast(1.15) saturate(0.75) brightness(1.02);
+  }
+  100% {
+    filter: blur(0) contrast(1) saturate(1) brightness(1);
+  }
 }
 
-@keyframes glitch-clip {
-  0%, 100% { clip-path: inset(0 0 0 0); }
-  15% { clip-path: inset(20% 0 60% 0); }
-  30% { clip-path: inset(60% 0 10% 0); }
-  45% { clip-path: inset(10% 0 70% 0); }
-  60% { clip-path: inset(40% 0 30% 0); }
-  75% { clip-path: inset(70% 0 5% 0); }
-  90% { clip-path: inset(5% 0 80% 0); }
-}
-
-@keyframes rgb-split {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  15% { opacity: 0.6; transform: translate(-2px, 1px); }
-  30% { opacity: 0.3; transform: translate(2px, -1px); }
-  45% { opacity: 0.7; transform: translate(3px, 0); }
-  60% { opacity: 0.2; transform: translate(-1px, -1px); }
-  75% { opacity: 0.5; transform: translate(1px, 2px); }
-  90% { opacity: 0.4; transform: translate(-2px, 0); }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(200%); }
-}
-
-.avatar-digital {
-  filter: blur(2px) contrast(1.3) saturate(0.2) brightness(1.15);
-  animation: glitch-skew 0.3s steps(2) infinite;
-}
-
-.avatar-digital::before,
-.avatar-digital::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.avatar-digital::before {
-  background: inherit;
-  opacity: 0;
-  animation: rgb-split 0.25s steps(2) infinite 0.05s;
-  mix-blend-mode: screen;
-  filter: hue-rotate(0deg) brightness(2);
-}
-
-.avatar-digital::after {
-  background: inherit;
-  opacity: 0;
-  animation: rgb-split 0.25s steps(2) infinite 0.1s;
-  mix-blend-mode: screen;
-  filter: hue-rotate(180deg) brightness(2);
-}
-
-.avatar-digital .avatar-scanline {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.avatar-digital .avatar-scanline::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(212, 116, 92, 0.5);
-  animation: scanline 2s linear infinite;
-  box-shadow: 0 0 8px rgba(212, 116, 92, 0.3);
-}
-
-.avatar-grayscale {
-  filter: grayscale(100%);
-  transition: filter 1s ease-out;
-}
-
-.avatar-color {
-  filter: none;
-  transition: filter 1.2s ease-out;
+.avatar-enter {
+  animation: avatar-enter 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @layer utilities {
