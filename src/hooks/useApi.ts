@@ -17,11 +17,16 @@ export function usePosts(params?: { cursor?: string; limit?: number; category?: 
     queryKey: ['posts', params],
     queryFn: async () => {
       const res = await fetch(`${BASE}/posts?${searchParams}`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
       const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
       if (!json.success) throw new Error(json.error?.message ?? '获取文章列表失败')
       return json.data as { items: PostListItem[]; nextCursor: string | null; hasMore: boolean }
     },
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   })
 }
 
@@ -30,12 +35,17 @@ export function usePost(slug: string) {
     queryKey: ['post', slug],
     queryFn: async () => {
       const res = await fetch(`${BASE}/posts/${slug}`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
       const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
       if (!json.success) throw new Error(json.error?.message ?? '获取文章失败')
       return json.data as Post
     },
     staleTime: 10 * 60 * 1000,
     enabled: !!slug,
+    retry: 1,
   })
 }
 
@@ -43,11 +53,7 @@ export function usePost(slug: string) {
 export function useAnimeList() {
   return useQuery({
     queryKey: ['anime'],
-    queryFn: async () => {
-      // For now, hardcode an empty anime list since there's no public anime API yet.
-      // Will be wired when the API is added.
-      return [] as Anime[]
-    },
+    queryFn: async () => [] as Anime[],
     staleTime: 30 * 60 * 1000,
   })
 }
@@ -56,10 +62,7 @@ export function useAnimeList() {
 export function useWikiCategories() {
   return useQuery({
     queryKey: ['wiki-categories'],
-    queryFn: async () => {
-      // Wire to API when available
-      return [] as WikiCategory[]
-    },
+    queryFn: async () => [] as WikiCategory[],
     staleTime: 60 * 60 * 1000,
   })
 }
@@ -81,9 +84,7 @@ export function useWikiPage(category: string, slug: string) {
 export function useEssays(params?: { cursor?: string; limit?: number }) {
   return useQuery({
     queryKey: ['essays', params],
-    queryFn: async () => {
-      return [] as Essay[]
-    },
+    queryFn: async () => [] as Essay[],
     staleTime: 10 * 60 * 1000,
   })
 }
@@ -91,10 +92,7 @@ export function useEssays(params?: { cursor?: string; limit?: number }) {
 export function useEssay(slug: string) {
   return useQuery({
     queryKey: ['essay', slug],
-    queryFn: async () => {
-      if (!slug) throw new Error('没有 slug')
-      return null as Essay | null
-    },
+    queryFn: async () => null as Essay | null,
     enabled: !!slug,
   })
 }
@@ -103,9 +101,7 @@ export function useEssay(slug: string) {
 export function useFriends() {
   return useQuery({
     queryKey: ['friends'],
-    queryFn: async () => {
-      return [] as Friend[]
-    },
+    queryFn: async () => [] as Friend[],
     staleTime: 60 * 60 * 1000,
   })
 }
@@ -114,14 +110,7 @@ export function useFriends() {
 export function useStats() {
   return useQuery({
     queryKey: ['stats'],
-    queryFn: async () => {
-      return {
-        totalViews: 0,
-        totalPosts: 0,
-        recentPosts: [],
-        popularPosts: [],
-      } as SiteStats
-    },
+    queryFn: async () => ({ totalViews: 0, totalPosts: 0, recentPosts: [], popularPosts: [] } as SiteStats),
     staleTime: 2 * 60 * 1000,
   })
 }

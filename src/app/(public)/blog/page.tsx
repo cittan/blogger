@@ -7,7 +7,7 @@ import { usePosts } from '@/hooks/useApi'
 
 export default function BlogPage() {
   const [category, setCategory] = useState('')
-  const { data, isLoading, isError } = usePosts({ category: category || undefined, limit: 20 })
+  const { data, isLoading, isError, error } = usePosts({ category: category || undefined, limit: 20 })
 
   const posts = data?.items ?? []
 
@@ -24,7 +24,10 @@ export default function BlogPage() {
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <PostCardSkeleton key={i} />)
         ) : isError ? (
-          <p className="text-sm text-accent-red">加载失败，请稍后重试。</p>
+          <div className="text-sm">
+            <p className="text-accent-red mb-2">加载失败</p>
+            <p className="text-text-secondary/60 text-xs break-all">{(error as Error)?.message}</p>
+          </div>
         ) : posts.length === 0 ? (
           <p className="text-sm text-text-secondary">还没有文章。</p>
         ) : (
