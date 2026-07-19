@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: '杂谈',
-  description: '随便写写',
-}
+import { PostCard, PostCardSkeleton } from '@/components/blog/PostCard'
+import { useEssays } from '@/hooks/useApi'
 
 export default function EssaysPage() {
+  const { data, isLoading, isError } = useEssays()
+  const essays = data ?? []
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -17,8 +18,31 @@ export default function EssaysPage() {
           随机一篇
         </button>
       </div>
-      <div className="space-y-4" id="essays-list">
-        <p className="text-sm text-text-secondary">加载中...</p>
+      <div className="space-y-4">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />)
+        ) : isError ? (
+          <p className="text-sm text-accent-red">加载失败。</p>
+        ) : essays.length === 0 ? (
+          <p className="text-sm text-text-secondary">还没有杂谈。</p>
+        ) : (
+          essays.map((essay) => (
+            <PostCard
+              key={essay.id}
+              post={{
+                id: essay.id,
+                title: essay.title,
+                slug: essay.slug,
+                summary: essay.summary,
+                category: 'essay',
+                tags: [],
+                publishedAt: essay.publishedAt,
+                readingTime: essay.readingTime,
+                views: 0,
+              }}
+            />
+          ))
+        )}
       </div>
     </div>
   )
