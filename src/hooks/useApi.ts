@@ -1,6 +1,7 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import type { PaginatedResponse } from '@/types/api'
 import type { PostListItem, Post, Anime, WikiCategory, WikiPage, Essay, Friend, SiteStats } from '@/types'
 
 const BASE = '/api/v1'
@@ -25,6 +26,31 @@ export function usePosts(params?: { cursor?: string; limit?: number; category?: 
       if (!json.success) throw new Error(json.error?.message ?? '获取文章列表失败')
       return json.data as { items: PostListItem[]; nextCursor: string | null; hasMore: boolean }
     },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  })
+}
+
+// --- Posts (infinite scroll) ---
+export function useInfinitePosts(params?: { limit?: number; category?: string }) {
+  return useInfiniteQuery({
+    queryKey: ['posts', 'infinite', params],
+    queryFn: async ({ pageParam }) => {
+      const searchParams = new URLSearchParams()
+      searchParams.set('limit', String(params?.limit ?? 20))
+      if (pageParam) searchParams.set('cursor', pageParam as string)
+      if (params?.category) searchParams.set('category', params.category)
+      const res = await fetch(`${BASE}/posts?${searchParams}`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取文章列表失败')
+      return json.data as PaginatedResponse<PostListItem>
+    },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,
     staleTime: 5 * 60 * 1000,
     retry: 1,
   })

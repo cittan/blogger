@@ -1,19 +1,41 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCursorEffect } from '@/hooks/useCursorEffect'
+import { cn } from '@/utils/cn'
+
+type AvatarPhase = 'digital' | 'grayscale' | 'color'
 
 export function EntryPage() {
   const avatarRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLHeadingElement>(null)
   const taglineRef = useRef<HTMLParagraphElement>(null)
 
+  const [phase, setPhase] = useState<AvatarPhase>('digital')
+
+  // Sequence: digital → grayscale → color
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('grayscale'), 1200)
+    const t2 = setTimeout(() => setPhase('color'), 2400)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [])
+
   useCursorEffect([
     { ref: avatarRef, factor: 14 },
     { ref: nameRef, factor: 7 },
     { ref: taglineRef, factor: 4 },
   ])
+
+  const phaseClass =
+    phase === 'digital'
+      ? 'avatar-digital'
+      : phase === 'grayscale'
+        ? 'avatar-grayscale'
+        : 'avatar-color'
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -28,22 +50,31 @@ export function EntryPage() {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-8">
-        {/* Avatar - 40% bigger */}
-        <div
-          ref={avatarRef}
-          className="relative w-36 h-36 rounded-full overflow-hidden border-2"
-          style={{
-            borderColor: 'rgba(240, 235, 227, 0.12)',
-            boxShadow:
-              '0 0 60px rgba(212, 116, 92, 0.25), 0 0 120px rgba(212, 116, 92, 0.10)',
-          }}
-        >
-          <div className="w-full h-full bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center text-5xl text-text-primary/60">
-            c
+        {/* Avatar — outer wrapper for cursor parallax */}
+        <div ref={avatarRef} className="w-36 h-36">
+          {/* Inner wrapper for glitch/phase + visual styling */}
+          <div
+            className={cn(
+              'w-full h-full rounded-full overflow-hidden border-2',
+              phaseClass
+            )}
+            style={{
+              borderColor: 'rgba(240, 235, 227, 0.12)',
+              boxShadow:
+                '0 0 60px rgba(212, 116, 92, 0.25), 0 0 120px rgba(212, 116, 92, 0.10)',
+            }}
+          >
+            {/* Scanline overlay — only during digital phase */}
+            {phase === 'digital' && <div className="avatar-scanline" />}
+
+            {/* Avatar content */}
+            <div className="w-full h-full bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center text-5xl text-text-primary/60">
+              c
+            </div>
           </div>
         </div>
 
-        {/* Name - bigger */}
+        {/* Name — bigger */}
         <h1
           ref={nameRef}
           className="text-6xl font-bold text-text-primary tracking-widest"
@@ -51,7 +82,7 @@ export function EntryPage() {
           cittan
         </h1>
 
-        {/* Tagline - bigger */}
+        {/* Tagline — bigger */}
         <p
           ref={taglineRef}
           className="text-base text-text-secondary tracking-wider"
@@ -59,7 +90,7 @@ export function EntryPage() {
           只会vibe coding的fw一个
         </p>
 
-        {/* Enter button - bigger */}
+        {/* Enter button — bigger */}
         <Link
           href="/blog"
           className="mt-10 px-10 py-3 border text-text-secondary hover:text-accent-red hover:border-accent-red transition-all duration-300 rounded-journal tracking-widest text-base hover:scale-[1.03]"
