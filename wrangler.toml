@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "cittan-blog-db"
-database_id = ""
+database_id = "a939ba8a-8872-4e9b-b0ed-414b509a71ba"
 
 [[r2_buckets]]
 binding = "IMAGES"
