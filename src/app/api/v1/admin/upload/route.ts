@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getDB } from '@/server/db'
 
 export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
-  const { env } = getRequestContext()
+  const db = getDB()
+  if (!db) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INTERNAL', message: '服务未配置' } },
+      { status: 500 }
+    )
+  }
 
   try {
     const formData = await request.formData()
@@ -17,17 +23,15 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${(env as any).CF_ACCOUNT_ID}/images/v1`,
+      `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/images/v1`,
       {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${(env as any).CF_API_TOKEN}`,
-        },
+        headers: { Authorization: `Bearer ${process.env.CF_API_TOKEN}` },
         body: formData,
       }
     )
 
-    const result = (await response.json()) as any
+    const result = (await response.json()) as { success: boolean; result?: { variants: string[] } }
     if (!result.success) {
       return NextResponse.json(
         { success: false, error: { code: 'UPLOAD_FAILED', message: '上传失败' } },
@@ -35,10 +39,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({
-      success: true,
-      data: { url: result.result.variants[0] },
-    })
+    return NextResponse.json({ success: true, data: { url: result.result!.variants[0] } })
   } catch (error) {
     return NextResponse.json(
       { success: false, error: { code: 'INTERNAL', message: '上传失败' } },

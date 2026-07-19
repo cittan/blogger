@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getDB } from '@/server/db'
 import { PostsRepository } from '@/server/repositories/posts'
 import { PostsService } from '@/server/services/posts'
 
@@ -10,8 +10,16 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params
-  const { env } = getRequestContext()
-  const repo = new PostsRepository((env as any).DB)
+
+  const db = getDB()
+  if (!db) {
+    return NextResponse.json(
+      { success: false, error: { code: 'NOT_FOUND', message: '文章不存在' } },
+      { status: 404 }
+    )
+  }
+
+  const repo = new PostsRepository(db)
   const service = new PostsService(repo)
 
   try {

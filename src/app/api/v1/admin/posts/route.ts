@@ -1,32 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getDB } from '@/server/db'
 import { PostsRepository } from '@/server/repositories/posts'
 import { PostsService } from '@/server/services/posts'
 import { postSchema, updatePostSchema } from '@/schemas/posts'
 
 export const runtime = 'edge'
 
+function noDB() {
+  return NextResponse.json(
+    { success: false, error: { code: 'INTERNAL', message: '数据库未连接' } },
+    { status: 500 }
+  )
+}
+
 export async function POST(request: NextRequest) {
-  const { env } = getRequestContext()
-  const repo = new PostsRepository((env as any).DB)
+  const db = getDB()
+  if (!db) return noDB()
+
+  const repo = new PostsRepository(db)
   const service = new PostsService(repo)
 
   try {
-    const body = await request.json()
+    const body = (await request.json()) as Record<string, unknown>
     const parsed = postSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'VALIDATION',
-            message: parsed.error.errors[0]?.message ?? '数据校验失败',
-          },
-        },
+        { success: false, error: { code: 'VALIDATION', message: parsed.error.errors[0]?.message ?? '数据校验失败' } },
         { status: 400 }
       )
     }
-
     const result = await service.createPost(parsed.data)
     return NextResponse.json({ success: true, data: result }, { status: 201 })
   } catch (error) {
@@ -38,8 +40,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const { env } = getRequestContext()
-  const repo = new PostsRepository((env as any).DB)
+  const db = getDB()
+  if (!db) return noDB()
+
+  const repo = new PostsRepository(db)
   const service = new PostsService(repo)
 
   try {
@@ -52,21 +56,13 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     const parsed = updatePostSchema.safeParse(data)
     if (!parsed.success) {
       return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'VALIDATION',
-            message: parsed.error.errors[0]?.message ?? '数据校验失败',
-          },
-        },
+        { success: false, error: { code: 'VALIDATION', message: parsed.error.errors[0]?.message ?? '数据校验失败' } },
         { status: 400 }
       )
     }
-
     await service.updatePost(slug, parsed.data)
     return NextResponse.json({ success: true, data: { slug } })
   } catch (error) {
@@ -78,8 +74,10 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const { env } = getRequestContext()
-  const repo = new PostsRepository((env as any).DB)
+  const db = getDB()
+  if (!db) return noDB()
+
+  const repo = new PostsRepository(db)
   const service = new PostsService(repo)
 
   const { searchParams } = new URL(request.url)

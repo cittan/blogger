@@ -1,11 +1,10 @@
-export function getDB(): D1Database {
-  throw new Error(
-    'In development, use getRequestContext().env.DB directly in route handlers'
-  )
-}
+import { getRequestContext } from '@cloudflare/next-on-pages'
 
-export interface D1Result<T> {
-  results: T[]
-  success: boolean
-  meta: object
+export function getDB(): D1Database | null {
+  try {
+    const { env } = getRequestContext() as { env: Record<string, unknown> }
+    return (env.DB ?? null) as D1Database | null
+  } catch {
+    return null
+  }
 }

@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getDB } from '@/server/db'
 import { PostsRepository } from '@/server/repositories/posts'
 import { PostsService } from '@/server/services/posts'
 
 export const runtime = 'edge'
 
 export async function GET(request: NextRequest) {
-  const { env } = getRequestContext()
-  const repo = new PostsRepository((env as any).DB)
+  const db = getDB()
+
+  if (!db) {
+    return NextResponse.json({
+      success: true,
+      data: { items: [], nextCursor: null, hasMore: false },
+    })
+  }
+
+  const repo = new PostsRepository(db)
   const service = new PostsService(repo)
 
   const { searchParams } = new URL(request.url)
