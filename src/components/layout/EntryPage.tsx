@@ -4,12 +4,29 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { useCursorEffect } from '@/hooks/useCursorEffect'
 
-// Staggered delays for 4×4 tile wave reveal (top-left → bottom-right)
-const TILE_DELAYS = [
-  0.00, 0.05, 0.10, 0.15,
-  0.06, 0.11, 0.16, 0.21,
-  0.12, 0.17, 0.22, 0.27,
-  0.18, 0.23, 0.28, 0.33,
+// 4×4 tile fragment configs — each tile flies in from one of 4 directions.
+// sx/sy: start offset in px; bgx/bgy: background-position to show gradient slice.
+const TILES = [
+  // row 0 — top edge
+  { sx: '-60px', sy: '-130px', bgx: '0px',    bgy: '0px',    delay: '0.00s' },
+  { sx: '-20px', sy: '-150px', bgx: '-36px',  bgy: '0px',    delay: '0.03s' },
+  { sx:  '20px', sy: '-150px', bgx: '-72px',  bgy: '0px',    delay: '0.06s' },
+  { sx:  '60px', sy: '-130px', bgx: '-108px', bgy: '0px',    delay: '0.02s' },
+  // row 1 — left / top-left / top-right / right
+  { sx: '-140px', sy: '-50px',  bgx: '0px',    bgy: '-36px', delay: '0.04s' },
+  { sx: '-110px', sy: '-110px', bgx: '-36px',  bgy: '-36px', delay: '0.09s' },
+  { sx:  '110px', sy: '-110px', bgx: '-72px',  bgy: '-36px', delay: '0.12s' },
+  { sx:  '140px', sy: '-50px',  bgx: '-108px', bgy: '-36px', delay: '0.05s' },
+  // row 2 — left / bottom-left / bottom-right / right
+  { sx: '-140px', sy:  '50px',  bgx: '0px',    bgy: '-72px', delay: '0.08s' },
+  { sx: '-110px', sy:  '110px',  bgx: '-36px',  bgy: '-72px', delay: '0.13s' },
+  { sx:  '110px', sy:  '110px',  bgx: '-72px',  bgy: '-72px', delay: '0.10s' },
+  { sx:  '140px', sy:  '50px',  bgx: '-108px', bgy: '-72px', delay: '0.07s' },
+  // row 3 — bottom edge
+  { sx: '-60px', sy:  '130px', bgx: '0px',    bgy: '-108px', delay: '0.01s' },
+  { sx: '-20px', sy:  '150px', bgx: '-36px',  bgy: '-108px', delay: '0.04s' },
+  { sx:  '20px', sy:  '150px', bgx: '-72px',  bgy: '-108px', delay: '0.03s' },
+  { sx:  '60px', sy:  '130px', bgx: '-108px', bgy: '-108px', delay: '0.06s' },
 ]
 
 export function EntryPage() {
@@ -38,28 +55,39 @@ export function EntryPage() {
       <div className="relative z-10 flex flex-col items-center gap-8">
         {/* Avatar — outer wrapper for cursor parallax */}
         <div ref={avatarRef} className="w-36 h-36">
-          {/* Inner wrapper — circle clip + border + glow */}
+          {/* Inner wrapper — circle clip + border + glow + grayscale→color */}
           <div
-            className="relative w-full h-full rounded-full overflow-hidden border-2"
+            className="relative w-full h-full rounded-full overflow-hidden border-2 avatar-color-reveal"
             style={{
               borderColor: 'rgba(240, 235, 227, 0.12)',
               boxShadow:
                 '0 0 60px rgba(212, 116, 92, 0.25), 0 0 120px rgba(212, 116, 92, 0.10)',
             }}
           >
-            {/* Avatar content — starts grayscale, fades to color */}
-            <div className="w-full h-full avatar-color-reveal bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center text-5xl text-text-primary/60">
-              c
+            {/* Base avatar — revealed after tiles dissolve */}
+            <div className="w-full h-full bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center">
+              <span className="text-5xl text-text-primary/60 avatar-letter-reveal">
+                c
+              </span>
             </div>
 
-            {/* 4×4 tile overlay — fades away to reveal avatar */}
+            {/* 4×4 tile overlay — fragments fly in from 4 directions */}
             <div className="avatar-tile-grid">
-              {TILE_DELAYS.map((delay, i) => (
+              {TILES.map((t, i) => (
                 <div
                   key={i}
                   className="avatar-tile"
-                  style={{ animationDelay: `${delay}s` }}
-                />
+                  style={{
+                    '--sx': t.sx,
+                    '--sy': t.sy,
+                    animationDelay: t.delay,
+                  } as React.CSSProperties}
+                >
+                  <div
+                    className="avatar-tile-inner"
+                    style={{ backgroundPosition: `${t.bgx} ${t.bgy}` }}
+                  />
+                </div>
               ))}
             </div>
           </div>
