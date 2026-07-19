@@ -1,32 +1,45 @@
-'use client'
-
-import { use } from 'react'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { ProgressBar } from '@/components/blog/ProgressBar'
 import { PostNav } from '@/components/blog/PostNav'
 import { Tag } from '@/components/ui/Tag'
 import { Divider } from '@/components/ui/Divider'
-import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDateWithDot } from '@/utils/date'
-import { usePost } from '@/hooks/useApi'
+import { getDB } from '@/server/db'
+import { PostsRepository } from '@/server/repositories/posts'
+import type { Post } from '@/types'
+import type { Metadata } from 'next'
 
 export const runtime = 'edge'
 
-export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params)
-  const { data: post, isLoading, isError } = usePost(slug)
+interface Props {
+  params: Promise<{ slug: string }>
+}
 
-  if (isLoading) {
-    return (
-      <div className="max-w-content mx-auto px-6 py-12">
-        <Skeleton className="h-8 w-2/3 mb-4" />
-        <Skeleton className="h-4 w-32 mb-10" />
-        <Skeleton className="h-96 mb-6" />
-      </div>
-    )
+async function getPost(slug: string): Promise<Post | null> {
+  const db = getDB()
+  if (!db) return null
+  try {
+    const repo = new PostsRepository(db)
+    return await repo.getBySlug(slug)
+  } catch {
+    return null
   }
+}
 
-  if (isError || !post) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const post = await getPost(slug)
+  return {
+    title: post?.title ?? slug,
+    description: post?.summary ?? '',
+  }
+}
+
+export default async function PostPage({ params }: Props) {
+  const { slug } = await params
+  const post = await getPost(slug)
+
+  if (!post) {
     return (
       <div className="max-w-content mx-auto px-6 py-12 text-center">
         <p className="text-text-secondary">文章不存在或已被删除。</p>
