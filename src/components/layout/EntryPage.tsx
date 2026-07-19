@@ -10,56 +10,59 @@ export function EntryPage() {
   const taglineRef = useRef<HTMLParagraphElement>(null)
 
   useCursorEffect([
-    { ref: avatarRef, factor: 10 },
-    { ref: nameRef, factor: 5 },
-    { ref: taglineRef, factor: 3 },
+    { ref: avatarRef, factor: 14 },
+    { ref: nameRef, factor: 7 },
+    { ref: taglineRef, factor: 4 },
   ])
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      {/* Central warm glow on entry page */}
+      {/* Central warm glow */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at center, rgba(230, 180, 80, 0.08) 0%, rgba(212, 116, 92, 0.03) 40%, transparent 70%)',
+            'radial-gradient(ellipse at center, rgba(230, 180, 80, 0.10) 0%, rgba(212, 116, 92, 0.04) 40%, transparent 70%)',
         }}
       />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-6">
-        {/* Avatar with glow */}
+      <div className="relative z-10 flex flex-col items-center gap-8">
+        {/* Avatar - 40% bigger */}
         <div
           ref={avatarRef}
-          className="relative w-24 h-24 rounded-full overflow-hidden border-2"
+          className="relative w-36 h-36 rounded-full overflow-hidden border-2"
           style={{
-            borderColor: 'rgba(240, 235, 227, 0.1)',
+            borderColor: 'rgba(240, 235, 227, 0.12)',
             boxShadow:
-              '0 0 40px rgba(212, 116, 92, 0.2), 0 0 80px rgba(212, 116, 92, 0.08)',
+              '0 0 60px rgba(212, 116, 92, 0.25), 0 0 120px rgba(212, 116, 92, 0.10)',
           }}
         >
-          <div className="w-full h-full bg-gradient-to-br from-accent-red/30 to-accent-amber/20 flex items-center justify-center text-3xl text-text-primary/60">
+          <div className="w-full h-full bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center text-5xl text-text-primary/60">
             c
           </div>
         </div>
 
-        {/* Name */}
+        {/* Name - bigger */}
         <h1
           ref={nameRef}
-          className="text-4xl font-bold text-text-primary tracking-wider"
+          className="text-6xl font-bold text-text-primary tracking-widest"
         >
           cittan
         </h1>
 
-        {/* Tagline */}
-        <p ref={taglineRef} className="text-sm text-text-secondary tracking-wide">
+        {/* Tagline - bigger */}
+        <p
+          ref={taglineRef}
+          className="text-base text-text-secondary tracking-wider"
+        >
           只会vibe coding的fw一个
         </p>
 
-        {/* Enter button */}
+        {/* Enter button - bigger */}
         <Link
           href="/blog"
-          className="mt-8 px-8 py-2.5 border text-text-secondary hover:text-accent-red hover:border-accent-red transition-all duration-300 rounded-journal tracking-wider text-sm hover:scale-[1.03]"
+          className="mt-10 px-10 py-3 border text-text-secondary hover:text-accent-red hover:border-accent-red transition-all duration-300 rounded-journal tracking-widest text-base hover:scale-[1.03]"
           style={{ borderColor: 'rgba(240, 235, 227, 0.15)' }}
         >
           进入博客 →

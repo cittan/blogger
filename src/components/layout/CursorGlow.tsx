@@ -17,9 +17,8 @@ export function CursorGlow() {
 
     let animId: number
     const animate = () => {
-      // Smooth lerp for buttery cursor follow
-      posRef.current.x += (targetRef.current.x - posRef.current.x) * 0.08
-      posRef.current.y += (targetRef.current.y - posRef.current.y) * 0.08
+      posRef.current.x += (targetRef.current.x - posRef.current.x) * 0.06
+      posRef.current.y += (targetRef.current.y - posRef.current.y) * 0.06
 
       glow.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`
       animId = requestAnimationFrame(animate)
@@ -39,11 +38,11 @@ export function CursorGlow() {
       ref={glowRef}
       className="fixed pointer-events-none z-0"
       style={{
-        width: 500,
-        height: 500,
+        width: 600,
+        height: 600,
         borderRadius: '50%',
         background:
-          'radial-gradient(circle at center, rgba(212, 116, 92, 0.06) 0%, rgba(230, 180, 80, 0.03) 30%, transparent 70%)',
+          'radial-gradient(circle at center, rgba(122, 154, 138, 0.07) 0%, rgba(212, 116, 92, 0.04) 25%, rgba(230, 180, 80, 0.02) 50%, transparent 70%)',
         transform: 'translate(-50%, -50%)',
         willChange: 'transform',
       }}
