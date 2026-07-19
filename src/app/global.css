@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@300;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-bg text-text-primary font-serif antialiased;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+  ::selection {
+    @apply bg-accent-red/30 text-text-primary;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-text-secondary/20 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-secondary/40;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card rounded-journal border;
+    border-color: rgba(240, 235, 227, 0.06);
+  }
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+  .card-hover:hover {
+    border-color: rgba(212, 116, 92, 0.25);
+  }
+  .tag {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs;
+    @apply bg-accent-teal/15 text-accent-teal border border-accent-teal/25;
+  }
+  .tag-red {
+    @apply bg-accent-red/15 text-accent-red border border-accent-red/25;
+  }
+  .divider-decor {
+    @apply text-center text-text-secondary/40 text-xs tracking-widest py-8;
+  }
+  .nav-link {
+    @apply text-text-secondary hover:text-text-primary transition-colors duration-200;
+    @apply text-sm tracking-wide;
+  }
+  .nav-link.active {
+    @apply text-accent-red;
+  }
+  .nav-link.active::before {
+    content: '●';
+    @apply text-accent-red mr-1.5 text-[8px] align-middle;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md bg-bg/80;
+  }
+}

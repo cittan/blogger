@@ -1,0 +1,12 @@
+name = "cittan-blog"
+compatibility_date = "2026-07-19"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cittan-blog-db"
+database_id = ""
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "cittan-blog-images"
