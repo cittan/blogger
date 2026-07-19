@@ -67,33 +67,56 @@
   }
 }
 
-/* ── Entry page avatar enter animation ── */
+/* ── Entry page avatar tile reveal ── */
 /*
- * Pixelate + Grayscale→Color combined:
- *   blur() + high contrast() creates a thresholding effect
- *   that looks like pixel blocks resolving into focus,
- *   while saturate() transitions from grayscale to full color.
+ * 4×4 grid overlay tiles fade & shrink away to reveal the avatar.
+ * Staggered delays create a wave-like reveal.
+ * After tiles clear, the avatar transitions from grayscale → color.
  */
-@keyframes avatar-enter {
+@keyframes tile-reveal {
   0% {
-    filter: blur(7px) contrast(2.5) saturate(0) brightness(1.2);
+    opacity: 1;
+    transform: scale(1);
   }
-  25% {
-    filter: blur(5px) contrast(2.2) saturate(0) brightness(1.15);
-  }
-  55% {
-    filter: blur(2.5px) contrast(1.6) saturate(0.35) brightness(1.08);
-  }
-  80% {
-    filter: blur(0.8px) contrast(1.15) saturate(0.75) brightness(1.02);
+  50% {
+    opacity: 0.4;
+    transform: scale(0.9);
   }
   100% {
-    filter: blur(0) contrast(1) saturate(1) brightness(1);
+    opacity: 0;
+    transform: scale(0.75);
   }
 }
 
-.avatar-enter {
-  animation: avatar-enter 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+@keyframes color-reveal {
+  0% {
+    filter: grayscale(100%);
+  }
+  100% {
+    filter: grayscale(0%);
+  }
+}
+
+.avatar-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 1px;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.avatar-tile {
+  background: #1e2128;
+  animation: tile-reveal 0.4s ease-out forwards;
+  opacity: 1;
+}
+
+.avatar-color-reveal {
+  filter: grayscale(100%);
+  animation: color-reveal 0.7s ease-out 0.5s forwards;
 }
 
 @layer utilities {
