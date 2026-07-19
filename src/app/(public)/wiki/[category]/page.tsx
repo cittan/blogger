@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 export default async function WikiCategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
   return (

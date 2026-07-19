@@ -6,6 +6,8 @@ import { Divider } from '@/components/ui/Divider'
 import { formatDateWithDot } from '@/utils/date'
 import type { Metadata } from 'next'
 
+export const runtime = 'edge'
+
 interface Props {
   params: Promise<{ slug: string }>
 }

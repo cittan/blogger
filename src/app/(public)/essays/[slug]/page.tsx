@@ -2,6 +2,8 @@ import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { ProgressBar } from '@/components/blog/ProgressBar'
 import { Divider } from '@/components/ui/Divider'
 
+export const runtime = 'edge'
+
 export default async function EssayPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   return (

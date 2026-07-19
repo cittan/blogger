@@ -4,6 +4,8 @@ import { PostEditor } from '@/components/dashboard/PostEditor'
 import { useRouter } from 'next/navigation'
 import { useState, use } from 'react'
 
+export const runtime = 'edge'
+
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
