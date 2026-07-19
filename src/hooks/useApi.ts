@@ -53,8 +53,18 @@ export function usePost(slug: string) {
 export function useAnimeList() {
   return useQuery({
     queryKey: ['anime'],
-    queryFn: async () => [] as Anime[],
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/anime`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取动漫列表失败')
+      return json.data as Anime[]
+    },
     staleTime: 30 * 60 * 1000,
+    retry: 1,
   })
 }
 
@@ -62,8 +72,18 @@ export function useAnimeList() {
 export function useWikiCategories() {
   return useQuery({
     queryKey: ['wiki-categories'],
-    queryFn: async () => [] as WikiCategory[],
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/wiki`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取 Wiki 分类失败')
+      return json.data as WikiCategory[]
+    },
     staleTime: 60 * 60 * 1000,
+    retry: 1,
   })
 }
 
@@ -82,18 +102,42 @@ export function useWikiPage(category: string, slug: string) {
 
 // --- Essays ---
 export function useEssays(params?: { cursor?: string; limit?: number }) {
+  const searchParams = new URLSearchParams()
+  if (params?.cursor) searchParams.set('cursor', params.cursor)
+  if (params?.limit) searchParams.set('limit', String(params.limit))
+
   return useQuery({
     queryKey: ['essays', params],
-    queryFn: async () => [] as Essay[],
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/essays?${searchParams}`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取随笔列表失败')
+      return json.data as { items: Essay[]; nextCursor: string | null; hasMore: boolean }
+    },
     staleTime: 10 * 60 * 1000,
+    retry: 1,
   })
 }
 
 export function useEssay(slug: string) {
   return useQuery({
     queryKey: ['essay', slug],
-    queryFn: async () => null as Essay | null,
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/essays/${slug}`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取随笔失败')
+      return json.data as Essay
+    },
     enabled: !!slug,
+    retry: 1,
   })
 }
 
@@ -101,8 +145,18 @@ export function useEssay(slug: string) {
 export function useFriends() {
   return useQuery({
     queryKey: ['friends'],
-    queryFn: async () => [] as Friend[],
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/friends`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取友链失败')
+      return json.data as Friend[]
+    },
     staleTime: 60 * 60 * 1000,
+    retry: 1,
   })
 }
 
@@ -110,7 +164,17 @@ export function useFriends() {
 export function useStats() {
   return useQuery({
     queryKey: ['stats'],
-    queryFn: async () => ({ totalViews: 0, totalPosts: 0, recentPosts: [], popularPosts: [] } as SiteStats),
+    queryFn: async () => {
+      const res = await fetch(`${BASE}/stats`)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`API ${res.status}: ${text.slice(0, 200)}`)
+      }
+      const json = (await res.json()) as { success: boolean; error?: { message: string }; data: unknown }
+      if (!json.success) throw new Error(json.error?.message ?? '获取统计信息失败')
+      return json.data as SiteStats
+    },
     staleTime: 2 * 60 * 1000,
+    retry: 1,
   })
 }
