@@ -7,30 +7,23 @@ export const runtime = 'edge'
  * POST /api/v1/admin/verify
  * 验证管理端密钥
  *
- * Cloudflare Pages 环境变量读取顺序：
- * 1. process.env（Pages 构建时注入）
- * 2. getRequestContext().env（运行时 bindings）
+ * wrangler.toml [vars] 中声明 ADMIN_SECRET，
+ * Cloudflare Dashboard 的实际值在运行时覆盖。
  */
 export async function POST(request: NextRequest) {
+  const ctx = getRequestContext()
+  const env = (ctx as unknown as { env?: Record<string, unknown> })?.env
+  const adminSecret = env?.ADMIN_SECRET as string | undefined
+
+  if (!adminSecret) {
+    return NextResponse.json(
+      { success: false, error: { code: 'CONFIG', message: '管理员密钥未配置' } },
+      { status: 500 }
+    )
+  }
+
   try {
     const body = (await request.json()) as { secret: string }
-
-    // 优先 process.env → ctx.env
-    let adminSecret: string | undefined
-    try {
-      const ctx = getRequestContext()
-      const env = (ctx as unknown as { env?: Record<string, unknown> })?.env
-      adminSecret = (env?.ADMIN_SECRET as string) || process.env.ADMIN_SECRET
-    } catch {
-      adminSecret = process.env.ADMIN_SECRET
-    }
-
-    if (!adminSecret) {
-      return NextResponse.json(
-        { success: false, error: { code: 'CONFIG', message: '管理员密钥未配置' } },
-        { status: 500 }
-      )
-    }
 
     if (body.secret === adminSecret) {
       return NextResponse.json({ success: true, data: null })

@@ -2,6 +2,10 @@ name = "cittan-blog"
 compatibility_date = "2026-07-19"
 compatibility_flags = ["nodejs_compat"]
 
+[vars]
+# 实际值在 Cloudflare Dashboard 环境变量中配置
+ADMIN_SECRET = ""
+
 [[d1_databases]]
 binding = "DB"
 database_name = "cittan-blog-db"
