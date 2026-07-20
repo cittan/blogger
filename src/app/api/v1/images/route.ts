@@ -7,9 +7,7 @@ function getBucket(): R2Bucket | null {
   try {
     const ctx = getRequestContext()
     const env = (ctx as unknown as Record<string, unknown>)?.env as Record<string, unknown> | undefined
-    // 优先从 request context 拿
     if (env?.IMAGES) return env.IMAGES as R2Bucket
-    // 兜底：Cloudflare Pages 可能把 binding 挂在 process.env 上
     if (typeof process !== 'undefined' && (process.env as Record<string, unknown>)?.IMAGES) {
       return (process.env as Record<string, unknown>).IMAGES as R2Bucket
     }
@@ -19,17 +17,20 @@ function getBucket(): R2Bucket | null {
   }
 }
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ key: string[] }> },
-) {
+/**
+ * GET /api/v1/images?key=blogger/avatar/xxx.jpg
+ */
+export async function GET(request: NextRequest) {
   const bucket = getBucket()
   if (!bucket) {
     return new NextResponse('R2 binding "IMAGES" not found', { status: 500 })
   }
 
-  const { key } = await params
-  const objectKey = key.join('/')
+  const { searchParams } = new URL(request.url)
+  const objectKey = searchParams.get('key')
+  if (!objectKey) {
+    return new NextResponse('Missing key param', { status: 400 })
+  }
 
   try {
     const object = await bucket.get(objectKey)

@@ -108,5 +108,6 @@ export async function deleteFromR2(key: string): Promise<{ success: boolean; mes
  */
 export function getImageUrl(key: string): string {
   const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? ''
-  return `${base}/${key}`
+  if (base) return `${base}/${key}`
+  return `/api/v1/images?key=${encodeURIComponent(key)}`
 }

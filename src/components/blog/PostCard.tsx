@@ -15,7 +15,7 @@ function getCoverSrc(cover: string): string | null {
   if (!cover) return null
   // 已经是完整 URL 或已带 /api/v1/images/ 前缀 → 直接使用
   if (cover.startsWith('http') || cover.startsWith('/api/')) return cover
-  return `/api/v1/images/${cover}`
+  return `/api/v1/images?key=${encodeURIComponent(cover)}`
 }
 
 function PostCover({ cover, title }: { cover: string; title: string }) {

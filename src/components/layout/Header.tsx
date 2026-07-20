@@ -34,7 +34,7 @@ export function Header() {
             <span className="text-accent-red text-[10px] align-middle">●</span>
           ) : (
             <img
-              src="/api/v1/images/blogger/avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
+              src="/api/v1/images?key=blogger/avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
               alt=""
               className="w-5 h-5 rounded-full object-cover"
               onError={() => setAvatarError(true)}
