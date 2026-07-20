@@ -4,33 +4,64 @@ import { formatDateWithDot } from '@/utils/date'
 import type { PostListItem } from '@/types'
 import Link from 'next/link'
 
+/**
+ * 构造封面图 src：
+ * - 空字符串 → null（显示占位符）
+ * - 完整 URL → 直接使用（兼容旧数据）
+ * - R2 key → 通过 /api/v1/images/ 代理
+ */
+function getCoverSrc(cover: string): string | null {
+  if (!cover) return null
+  if (cover.startsWith('http')) return cover
+  return `/api/v1/images/${cover}`
+}
+
 export function PostCard({ post }: { post: PostListItem }) {
+  const coverSrc = getCoverSrc(post.cover)
+
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <Card hover padding="md" className="transition-all duration-300 group-hover:translate-x-1">
-        <div className="flex items-start gap-4">
-          <span className="text-xs text-accent-red whitespace-nowrap mt-0.5 transition-all duration-300 group-hover:scale-110">
-            ●
-          </span>
-          <div className="min-w-0 flex-1">
-            <span className="text-xs text-text-secondary block mb-1">
-              {formatDateWithDot(post.publishedAt)}
-            </span>
-            <h2 className="text-lg font-bold text-text-primary mb-2 group-hover:text-accent-red transition-colors line-clamp-2">
-              {post.title}
-            </h2>
-            <p className="text-sm text-text-secondary line-clamp-2 mb-3">
-              {post.summary || '（无摘要）'}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {post.tags?.map((tag) => (
-                <Tag key={tag}>{tag}</Tag>
-              ))}
+        <div className="flex flex-col sm:flex-row gap-5">
+          {/* 左侧 1/3：封面图 */}
+          <div className="sm:w-1/3 shrink-0">
+            {coverSrc ? (
+              <img
+                src={coverSrc}
+                alt={post.title}
+                className="w-full aspect-[4/3] object-cover rounded-journal"
+              />
+            ) : (
+              <div className="w-full aspect-[4/3] bg-gradient-to-br from-accent-red/15 to-accent-amber/10 rounded-journal flex items-center justify-center">
+                <span className="text-text-secondary/20 text-2xl font-serif">c</span>
+              </div>
+            )}
+          </div>
+
+          {/* 右侧 2/3：标题 + 摘要 + 标签 + 元数据 */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-text-primary mb-2 group-hover:text-accent-red transition-colors line-clamp-2">
+                {post.title}
+              </h2>
+              <p className="text-sm text-text-secondary line-clamp-2 mb-3">
+                {post.summary || '（无摘要）'}
+              </p>
+            </div>
+
+            <div>
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {post.tags?.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 text-xs text-text-secondary/60">
+                <span>{formatDateWithDot(post.publishedAt)}</span>
+                <span className="text-text-secondary/30">·</span>
+                <span>{post.readingTime} min</span>
+              </div>
             </div>
           </div>
-          <span className="text-xs text-text-secondary/50 whitespace-nowrap">
-            {post.readingTime} min
-          </span>
         </div>
       </Card>
     </Link>
@@ -40,12 +71,25 @@ export function PostCard({ post }: { post: PostListItem }) {
 export function PostCardSkeleton() {
   return (
     <Card padding="md">
-      <div className="flex items-start gap-4">
-        <div className="w-2 h-2 mt-0.5 rounded-full bg-text-secondary/10 animate-pulse" />
+      <div className="flex flex-col sm:flex-row gap-5">
+        {/* 封面骨架 */}
+        <div className="sm:w-1/3 shrink-0">
+          <div className="w-full aspect-[4/3] bg-text-secondary/10 rounded-journal animate-pulse" />
+        </div>
+
+        {/* 内容骨架 */}
         <div className="flex-1 space-y-2">
-          <div className="h-3 w-24 bg-text-secondary/10 rounded animate-pulse" />
           <div className="h-5 w-3/4 bg-text-secondary/10 rounded animate-pulse" />
           <div className="h-4 w-full bg-text-secondary/10 rounded animate-pulse" />
+          <div className="h-4 w-2/3 bg-text-secondary/10 rounded animate-pulse mb-3" />
+          <div className="flex gap-2 mb-2">
+            <div className="h-4 w-12 bg-text-secondary/10 rounded animate-pulse" />
+            <div className="h-4 w-12 bg-text-secondary/10 rounded animate-pulse" />
+          </div>
+          <div className="flex gap-3">
+            <div className="h-3 w-24 bg-text-secondary/10 rounded animate-pulse" />
+            <div className="h-3 w-10 bg-text-secondary/10 rounded animate-pulse" />
+          </div>
         </div>
       </div>
     </Card>

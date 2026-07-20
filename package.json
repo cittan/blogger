@@ -16,6 +16,7 @@
     "deploy": "npx @cloudflare/next-on-pages && npx wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1090.0",
     "@tanstack/react-query": "^5.0.0",
     "clsx": "^2.1.0",
     "framer-motion": "^12.42.2",

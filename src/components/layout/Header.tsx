@@ -27,9 +27,13 @@ export function Header() {
       <nav className="max-w-page mx-auto px-6 h-14 flex items-center justify-between">
         <Link
           href="/"
-          className="text-text-primary hover:text-accent-red transition-colors text-sm tracking-wider"
+          className="flex items-center gap-2 text-text-primary hover:text-accent-red transition-colors text-sm tracking-wider"
         >
-          <span className="text-accent-red text-[10px] align-middle mr-1.5">●</span>
+          <img
+            src="/api/v1/images/blogger/avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
+            alt=""
+            className="w-5 h-5 rounded-full object-cover"
+          />
           cittan
         </Link>
 

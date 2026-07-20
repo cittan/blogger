@@ -9,4 +9,4 @@ database_id = "a939ba8a-8872-4e9b-b0ed-414b509a71ba"
 
 [[r2_buckets]]
 binding = "IMAGES"
-bucket_name = "cittan-blog-images"
+bucket_name = "blogger"

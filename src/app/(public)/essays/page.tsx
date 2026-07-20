@@ -35,6 +35,7 @@ export default function EssaysPage() {
                 title: essay.title,
                 slug: essay.slug,
                 summary: essay.summary,
+                cover: '',
                 category: 'essay',
                 tags: [],
                 publishedAt: essay.publishedAt,

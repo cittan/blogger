@@ -20,6 +20,7 @@ export interface PostListItem {
   title: string
   slug: string
   summary: string
+  cover: string
   category: string
   tags: string[]
   publishedAt: string | null

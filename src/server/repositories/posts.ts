@@ -32,7 +32,7 @@ export class PostsRepository {
 
     const result = await this.db
       .prepare(
-        `SELECT p.id, p.title, p.slug, p.summary, p.category, p.reading_time as readingTime,
+        `SELECT p.id, p.title, p.slug, p.summary, p.cover, p.category, p.reading_time as readingTime,
                 p.views, p.published_at as publishedAt
          FROM posts p
          ${where}
