@@ -7,16 +7,18 @@ import { formatDateWithDot } from '@/utils/date'
 import { getCoverSrc } from '@/utils/image'
 import { getDB } from '@/server/db'
 import { PostsRepository } from '@/server/repositories/posts'
+import { PostsService } from '@/server/services/posts'
 import type { Post } from '@/types'
 import type { Metadata } from 'next'
 
 export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ slug: string }>
 }
 
-async function getPost(slug: string): Promise<Post | null> {
+async function getPostWithoutView(slug: string): Promise<Post | null> {
   const db = getDB()
   if (!db) return null
   try {
@@ -27,9 +29,21 @@ async function getPost(slug: string): Promise<Post | null> {
   }
 }
 
+async function getPostWithView(slug: string): Promise<Post | null> {
+  const db = getDB()
+  if (!db) return null
+  try {
+    const repo = new PostsRepository(db)
+    const service = new PostsService(repo)
+    return await service.getPost(slug)
+  } catch {
+    return null
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = await getPost(slug)
+  const post = await getPostWithoutView(slug)
   return {
     title: post?.title ?? slug,
     description: post?.summary ?? '',
@@ -38,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
-  const post = await getPost(slug)
+  const post = await getPostWithView(slug)
 
   if (!post) {
     return (

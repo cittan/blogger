@@ -1,5 +1,8 @@
+'use client'
+
 import { Card } from '@/components/ui/Card'
 import { Tag } from '@/components/ui/Tag'
+import { AnimatedViews } from './AnimatedViews'
 import { formatDateWithDot } from '@/utils/date'
 import { getCoverSrc } from '@/utils/image'
 import type { PostListItem } from '@/types'
@@ -60,6 +63,8 @@ export function PostCard({ post }: { post: PostListItem }) {
                 <span>{formatDateWithDot(post.publishedAt)}</span>
                 <span className="text-text-secondary/30">·</span>
                 <span>{post.readingTime} min</span>
+                <span className="text-text-secondary/30">·</span>
+                <AnimatedViews views={post.views} />
               </div>
             </div>
           </div>
