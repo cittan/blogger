@@ -127,7 +127,7 @@ export default function AnimePage() {
                                     />
                                   </div>
                                 </div>
-                                {item.notes && <p className="text-xs italic mt-2" style={{ color: "#d4745c" }}>" {item.notes}"</p>}
+                                {item.notes && <p className="text-xs italic mt-2" style={{ color: "#d4745c" }}>&ldquo;{item.notes}&rdquo;</p>}
                               </Card>
                             )
                           })}
