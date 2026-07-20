@@ -8,6 +8,7 @@ export const postSchema = z.object({
   cover: z.string().optional().default(''),
   category: z.enum(['tech', 'life', 'anime', 'essay']).default('tech'),
   tags: z.array(z.string().max(30)).max(10).default([]),
+  isPublished: z.boolean().optional().default(false),
 })
 
 export const updatePostSchema = postSchema.partial().extend({

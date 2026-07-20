@@ -156,6 +156,28 @@ export class PostsRepository {
     return { ...result, tags: tagsResult.results.map((r) => r.name) }
   }
 
+  async getBySlugAdmin(slug: string): Promise<Post | null> {
+    const result = await this.db
+      .prepare(
+        `SELECT id, title, slug, summary, content, cover, category,
+                reading_time as readingTime, views, is_published as isPublished,
+                is_pinned as isPinned,
+                published_at as publishedAt, created_at as createdAt, updated_at as updatedAt
+         FROM posts WHERE slug = ?`
+      )
+      .bind(slug)
+      .first<Omit<Post, 'tags'>>()
+
+    if (!result) return null
+
+    const tagsResult = await this.db
+      .prepare('SELECT name FROM post_tags WHERE post_id = ?')
+      .bind(result.id)
+      .all<{ name: string }>()
+
+    return { ...result, tags: tagsResult.results.map((r) => r.name) }
+  }
+
   async incrementViews(slug: string): Promise<void> {
     await this.db
       .prepare('UPDATE posts SET views = views + 1 WHERE slug = ?')
