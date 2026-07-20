@@ -32,6 +32,11 @@ export async function POST(request: NextRequest) {
       if (single) files.push(single)
     }
 
+    // 支持目录前缀：category 快捷映射，prefix 直接指定
+    const category = (formData.get('category') as string) || ''
+    const prefixMap: Record<string, string> = { cover: 'post', content: 'post-content' }
+    const prefix = (formData.get('prefix') as string) || prefixMap[category] || 'uploads'
+
     if (files.length === 0) {
       return NextResponse.json(
         { success: false, error: { code: 'VALIDATION', message: '未提供文件' } },
@@ -51,7 +56,7 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      const key = generateKey(file.name)
+      const key = generateKey(file.name, prefix)
       const buffer = await file.arrayBuffer()
       await bucket.put(key, buffer, {
         httpMetadata: {

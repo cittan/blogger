@@ -13,6 +13,31 @@ function noDB() {
   )
 }
 
+/** GET — 管理端获取全部文章（含未发布） */
+export async function GET(request: NextRequest) {
+  const db = getDB()
+  if (!db) return noDB()
+
+  const repo = new PostsRepository(db)
+  const service = new PostsService(repo)
+
+  const { searchParams } = new URL(request.url)
+  const cursor = searchParams.get('cursor') ?? undefined
+  const limit = parseInt(searchParams.get('limit') ?? '50', 10)
+  const category = searchParams.get('category') ?? undefined
+  const keyword = searchParams.get('keyword') ?? undefined
+
+  try {
+    const result = await service.listAllPosts({ cursor, limit, category, keyword })
+    return NextResponse.json({ success: true, data: result })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INTERNAL', message: '获取文章列表失败' } },
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   const db = getDB()
   if (!db) return noDB()
@@ -68,6 +93,32 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: { code: 'INTERNAL', message: '更新文章失败' } },
+      { status: 500 }
+    )
+  }
+}
+
+/** PATCH — 切换置顶状态 */
+export async function PATCH(request: NextRequest) {
+  const db = getDB()
+  if (!db) return noDB()
+
+  const repo = new PostsRepository(db)
+  const service = new PostsService(repo)
+
+  try {
+    const body = (await request.json()) as { slug: string }
+    if (!body.slug) {
+      return NextResponse.json(
+        { success: false, error: { code: 'VALIDATION', message: '缺少 slug' } },
+        { status: 400 }
+      )
+    }
+    const isPinned = await service.togglePin(body.slug)
+    return NextResponse.json({ success: true, data: { isPinned } })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INTERNAL', message: '操作失败' } },
       { status: 500 }
     )
   }

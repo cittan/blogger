@@ -27,9 +27,11 @@ export function getImagesBucket(): R2Bucket | null {
 }
 
 /**
- * 生成 R2 对象 key：uploads/YYYY/MM/timestamp-filename
+ * 生成 R2 对象 key：{prefix}/YYYY/MM/timestamp-filename
+ * @param filename 原始文件名
+ * @param prefix 目录前缀，默认 'uploads'；封面用 'post'，正文图片用 'post-content'
  */
-export function generateKey(filename: string): string {
+export function generateKey(filename: string, prefix = 'uploads'): string {
   const now = new Date()
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
@@ -37,7 +39,7 @@ export function generateKey(filename: string): string {
 
   // 清理文件名：保留中文、字母、数字、-、_、.
   const safeName = filename.replace(/[^a-zA-Z0-9一-鿿\-_.]/g, '_')
-  return `uploads/${year}/${month}/${ts}-${safeName}`
+  return `${prefix}/${year}/${month}/${ts}-${safeName}`
 }
 
 /**

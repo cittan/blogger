@@ -4,6 +4,7 @@ import { cn } from '@/utils/cn'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { AdminDrawer } from './AdminDrawer'
 
 const NAV_ITEMS = [
   { href: '/blog', label: '博客' },
@@ -53,13 +54,7 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/search"
-            className="text-text-secondary hover:text-text-primary transition-colors text-sm"
-            aria-label="搜索"
-          >
-            ○
-          </Link>
+          <AdminDrawer />
         </div>
 
         <button
@@ -84,13 +79,12 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/search"
+            <button
               className="nav-link text-base"
               onClick={() => setMenuOpen(false)}
             >
-              搜索
-            </Link>
+              管理
+            </button>
           </div>
         </div>
       )}

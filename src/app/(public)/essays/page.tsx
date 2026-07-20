@@ -41,6 +41,7 @@ export default function EssaysPage() {
                 publishedAt: essay.publishedAt,
                 readingTime: essay.readingTime,
                 views: 0,
+                isPinned: false,
               }}
             />
           ))

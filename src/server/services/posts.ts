@@ -64,4 +64,17 @@ export class PostsService {
   async deletePost(slug: string) {
     return this.repo.delete(slug)
   }
+
+  async listAllPosts(params: {
+    cursor?: string
+    limit?: number
+    category?: string
+    keyword?: string
+  }) {
+    return this.repo.listAll(params)
+  }
+
+  async togglePin(slug: string) {
+    return this.repo.togglePin(slug)
+  }
 }

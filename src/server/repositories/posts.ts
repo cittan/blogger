@@ -33,10 +33,10 @@ export class PostsRepository {
     const result = await this.db
       .prepare(
         `SELECT p.id, p.title, p.slug, p.summary, p.cover, p.category, p.reading_time as readingTime,
-                p.views, p.published_at as publishedAt
+                p.views, p.is_pinned as isPinned, p.published_at as publishedAt
          FROM posts p
          ${where}
-         ORDER BY p.published_at DESC
+         ORDER BY p.is_pinned DESC, p.published_at DESC
          LIMIT ?`
       )
       .bind(...bindings, limit + 1)
@@ -68,11 +68,78 @@ export class PostsRepository {
     return { items, nextCursor, hasMore }
   }
 
+  /** 管理端：返回全部文章（含未发布） */
+  async listAll(params: {
+    cursor?: string
+    limit?: number
+    category?: string
+    keyword?: string
+  }): Promise<{ items: PostListItem[]; nextCursor: string | null; hasMore: boolean }> {
+    const limit = params.limit ?? 50
+    const conditions: string[] = ['1=1']
+    const bindings: any[] = []
+
+    if (params.cursor) {
+      conditions.push('p.created_at < ?')
+      bindings.push(params.cursor)
+    }
+    if (params.category) {
+      conditions.push('p.category = ?')
+      bindings.push(params.category)
+    }
+    if (params.keyword) {
+      conditions.push('(p.title LIKE ? OR p.summary LIKE ?)')
+      const kw = `%${params.keyword}%`
+      bindings.push(kw, kw)
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
+
+    const result = await this.db
+      .prepare(
+        `SELECT p.id, p.title, p.slug, p.summary, p.cover, p.category, p.reading_time as readingTime,
+                p.views, p.is_published as isPublished, p.is_pinned as isPinned,
+                p.published_at as publishedAt, p.created_at as createdAt
+         FROM posts p
+         ${where}
+         ORDER BY p.is_pinned DESC, p.created_at DESC
+         LIMIT ?`
+      )
+      .bind(...bindings, limit + 1)
+      .all<PostListItem & { isPublished?: number; createdAt?: string }>()
+
+    const items = result.results.slice(0, limit)
+    const hasMore = result.results.length > limit
+    const nextCursor =
+      hasMore && items.length > 0 ? items[items.length - 1].createdAt ?? null : null
+
+    if (items.length > 0) {
+      const placeholders = items.map(() => '?').join(',')
+      const ids = items.map((i) => i.id)
+      const tagsResult = await this.db
+        .prepare(`SELECT post_id, name FROM post_tags WHERE post_id IN (${placeholders})`)
+        .bind(...ids)
+        .all<{ post_id: number; name: string }>()
+
+      const tagMap = new Map<number, string[]>()
+      for (const row of tagsResult.results) {
+        if (!tagMap.has(row.post_id)) tagMap.set(row.post_id, [])
+        tagMap.get(row.post_id)!.push(row.name)
+      }
+      for (const item of items) {
+        ;(item as any).tags = tagMap.get(item.id) ?? []
+      }
+    }
+
+    return { items, nextCursor, hasMore }
+  }
+
   async getBySlug(slug: string): Promise<Post | null> {
     const result = await this.db
       .prepare(
         `SELECT id, title, slug, summary, content, cover, category,
                 reading_time as readingTime, views, is_published as isPublished,
+                is_pinned as isPinned,
                 published_at as publishedAt, created_at as createdAt, updated_at as updatedAt
          FROM posts WHERE slug = ? AND is_published = 1`
       )
@@ -150,6 +217,7 @@ export class PostsRepository {
       tags: string[]
       readingTime: number
       isPublished: boolean
+      isPinned: boolean
     }>
   ): Promise<void> {
     const sets: string[] = []
@@ -187,6 +255,10 @@ export class PostsRepository {
         bindings.push(new Date().toISOString())
       }
     }
+    if (input.isPinned !== undefined) {
+      sets.push('is_pinned = ?')
+      bindings.push(input.isPinned ? 1 : 0)
+    }
     sets.push("updated_at = datetime('now')")
 
     if (sets.length > 0) {
@@ -221,5 +293,20 @@ export class PostsRepository {
       await this.db.prepare('DELETE FROM post_tags WHERE post_id = ?').bind(post.id).run()
       await this.db.prepare('DELETE FROM posts WHERE id = ?').bind(post.id).run()
     }
+  }
+
+  async togglePin(slug: string): Promise<boolean> {
+    const post = await this.db
+      .prepare('SELECT id, is_pinned FROM posts WHERE slug = ?')
+      .bind(slug)
+      .first<{ id: number; is_pinned: number }>()
+    if (!post) return false
+
+    const newVal = post.is_pinned ? 0 : 1
+    await this.db
+      .prepare("UPDATE posts SET is_pinned = ?, updated_at = datetime('now') WHERE id = ?")
+      .bind(newVal, post.id)
+      .run()
+    return newVal === 1
   }
 }

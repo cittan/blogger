@@ -9,6 +9,7 @@ export interface Post {
   readingTime: number
   views: number
   isPublished: boolean
+  isPinned: boolean
   publishedAt: string | null
   tags: string[]
   createdAt: string
@@ -26,6 +27,7 @@ export interface PostListItem {
   publishedAt: string | null
   readingTime: number
   views: number
+  isPinned: boolean
 }
 
 export interface Anime {

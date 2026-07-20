@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { AdminBlogList } from '@/components/dashboard/AdminBlogList'
 
 export default function AdminPostsPage() {
   return (
@@ -10,9 +11,7 @@ export default function AdminPostsPage() {
           <Button size="sm">+ 新建文章</Button>
         </Link>
       </div>
-      <div className="space-y-1">
-        <p className="text-xs text-text-secondary">加载中...</p>
-      </div>
+      <AdminBlogList />
     </div>
   )
 }
