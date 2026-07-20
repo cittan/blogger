@@ -2,9 +2,6 @@ name = "cittan-blog"
 compatibility_date = "2026-07-19"
 compatibility_flags = ["nodejs_compat"]
 
-[vars]
-ADMIN_SECRET = ""
-
 [[d1_databases]]
 binding = "DB"
 database_name = "cittan-blog-db"
