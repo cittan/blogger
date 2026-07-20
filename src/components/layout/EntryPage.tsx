@@ -74,7 +74,7 @@ export function EntryPage() {
               <img
                 src="/api/v1/images?key=avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
                 alt="cittan"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover avatar-img-reveal"
                 onError={() => setImgError(true)}
               />
             )}

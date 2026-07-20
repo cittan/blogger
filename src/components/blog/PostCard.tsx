@@ -13,8 +13,15 @@ import { useState } from 'react'
  */
 function getCoverSrc(cover: string): string | null {
   if (!cover) return null
-  // 已经是完整 URL 或已带 /api/v1/images/ 前缀 → 直接使用
-  if (cover.startsWith('http') || cover.startsWith('/api/')) return cover
+  if (cover.startsWith('http')) return cover
+  // 已经是 ?key= 格式 → 直接使用
+  if (cover.startsWith('/api/') && cover.includes('?key=')) return cover
+  // 旧格式 /api/v1/images/xxx → 转成 ?key=xxx
+  if (cover.startsWith('/api/v1/images/')) {
+    const key = cover.slice('/api/v1/images/'.length)
+    return `/api/v1/images?key=${encodeURIComponent(key)}`
+  }
+  // 纯 R2 key → 拼接
   return `/api/v1/images?key=${encodeURIComponent(cover)}`
 }
 

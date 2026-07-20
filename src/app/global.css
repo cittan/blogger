@@ -137,6 +137,17 @@
   animation: color-reveal 0.7s ease-out 0.65s forwards;
 }
 
+/* 头像图片：碎片动画期间不可见，碎片合并后渐变显现 */
+.avatar-img-reveal {
+  opacity: 0;
+  animation: avatar-fade-in 0.5s ease-out 0.95s forwards;
+}
+
+@keyframes avatar-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 @layer utilities {
   .glass {
     @apply backdrop-blur-md bg-bg/80;
