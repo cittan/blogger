@@ -16,7 +16,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`/api/v1/posts/${id}`)
+        const res = await fetch(`/api/v1/admin/posts/${id}`)
         const json = (await res.json()) as {
           success: boolean
           data?: {
