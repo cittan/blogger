@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     description: '只会vibe coding的fw一个',
     type: 'website',
   },
+  icons: {
+    icon: '/api/v1/images?key=avatar/favicon.png',
+  },
   robots: {
     index: true,
     follow: true,
