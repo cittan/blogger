@@ -42,6 +42,7 @@ interface PostEditorProps {
     category: string
     cover: string
     tags: string[]
+    isPublished: boolean
   }) => void
   isSaving?: boolean
 }
@@ -96,9 +97,9 @@ export function PostEditor({ initialData, onSave, isSaving }: PostEditorProps) {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent, isPublished: boolean) => {
     e.preventDefault()
-    onSave({ title, slug, content, summary, category, cover, tags: [] })
+    onSave({ title, slug, content, summary, category, cover, tags: [], isPublished })
   }
 
   const handleTitleChange = (value: string) => {
@@ -114,7 +115,7 @@ export function PostEditor({ initialData, onSave, isSaving }: PostEditorProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form className="space-y-6">
       {/* Cover Upload */}
       <CoverUpload value={cover} onChange={setCover} />
 
@@ -207,10 +208,10 @@ export function PostEditor({ initialData, onSave, isSaving }: PostEditorProps) {
         </select>
 
         <div className="flex gap-3">
-          <Button type="button" variant="ghost" size="sm">
+          <Button type="button" variant="ghost" size="sm" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, false)} disabled={isSaving}>
             保存草稿
           </Button>
-          <Button type="submit" disabled={isSaving}>
+          <Button type="button" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, true)} disabled={isSaving}>
             {isSaving ? '保存中...' : '发布'}
           </Button>
         </div>
