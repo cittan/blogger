@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ContextMenu } from './ContextMenu'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import type { PostListItem } from '@/types'
 import Link from 'next/link'
 
@@ -16,6 +17,7 @@ export function AdminBlogList() {
     y: number
     post: AdminPostItem
   } | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -65,12 +67,17 @@ export function AdminBlogList() {
   }
 
   const handleDelete = (slug: string) => {
-    if (window.confirm('确定要删除这篇文章吗？此操作不可撤销。')) {
-      deleteMutation.mutate(slug)
+    setDeleteTarget(slug)
+  }
+
+  const handleConfirmDelete = () => {
+    if (deleteTarget) {
+      deleteMutation.mutate(deleteTarget)
+      setDeleteTarget(null)
     }
   }
 
-  const posts = data?.items ?? []
+  const posts: AdminPostItem[] = data?.items ?? []
 
   if (isError) {
     return (
@@ -174,6 +181,18 @@ export function AdminBlogList() {
           ]}
         />
       )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="删除博客"
+        message="确定要删除这篇文章吗？此操作不可撤销。"
+        confirmText="删除"
+        cancelText="取消"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+        loading={deleteMutation.isPending}
+      />
     </div>
   )
 }
