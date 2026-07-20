@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { getCoverSrc } from '@/utils/image'
 
 interface CoverUploadProps {
   value: string
@@ -34,7 +35,7 @@ export function CoverUpload({ value, onChange }: CoverUploadProps) {
     }
   }
 
-  const displaySrc = preview || value
+  const displaySrc = preview || getCoverSrc(value)
   const showPreview = !!displaySrc
 
   return (
