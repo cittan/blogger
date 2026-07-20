@@ -1,6 +1,7 @@
 'use client'
 
 import { use } from 'react'
+import { getCoverSrc } from "@/utils/image"
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useWikiPage } from '@/hooks/useApi'
@@ -31,6 +32,7 @@ export default function WikiDetailPage({ params }: { params: Promise<{ category:
   return (
     <article className="max-w-content mx-auto">
       <h1 className="text-2xl font-bold text-text-primary mb-8">{data.title}</h1>
+      {getCoverSrc(data.cover) && <img src={getCoverSrc(data.cover)!} alt={data.title} className="w-full rounded-journal mb-8 object-cover max-h-96" />}
       <MarkdownRenderer content={data.content} />
     </article>
   )

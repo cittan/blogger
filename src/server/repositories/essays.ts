@@ -19,7 +19,7 @@ export class EssaysRepository {
     bindings.push(limit + 1)
     const result = await this.db
       .prepare(
-        `SELECT id, title, slug, summary, content, reading_time as readingTime,
+        `SELECT id, title, slug, summary, cover, content, reading_time as readingTime,
                 is_published as isPublished, published_at as publishedAt,
                 created_at as createdAt, updated_at as updatedAt
          FROM essays ${where} ORDER BY created_at DESC LIMIT ?`
@@ -37,7 +37,7 @@ export class EssaysRepository {
   async getBySlug(slug: string): Promise<Essay | null> {
     return this.db
       .prepare(
-        `SELECT id, title, slug, summary, content, reading_time as readingTime,
+        `SELECT id, title, slug, summary, cover, content, reading_time as readingTime,
                 is_published as isPublished, published_at as publishedAt,
                 created_at as createdAt, updated_at as updatedAt
          FROM essays WHERE slug = ? AND is_published = 1`
@@ -50,14 +50,15 @@ export class EssaysRepository {
     title: string
     slug: string
     summary: string
+    cover?: string
     content: string
     readingTime: number
   }): Promise<number> {
     const result = await this.db
       .prepare(
-        'INSERT INTO essays (title, slug, summary, content, reading_time) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO essays (title, slug, summary, cover, content, reading_time) VALUES (?, ?, ?, ?, ?, ?)'
       )
-      .bind(input.title, input.slug, input.summary, input.content, input.readingTime)
+      .bind(input.title, input.slug, input.summary, input.cover ?? '', input.content, input.readingTime)
       .run()
     return (result.meta as any).last_row_id
   }
@@ -67,6 +68,7 @@ export class EssaysRepository {
     input: Partial<{
       title: string
       summary: string
+      cover: string
       content: string
       readingTime: number
       isPublished: boolean
@@ -76,6 +78,7 @@ export class EssaysRepository {
     const bindings: any[] = []
     if (input.title !== undefined) { sets.push('title = ?'); bindings.push(input.title) }
     if (input.summary !== undefined) { sets.push('summary = ?'); bindings.push(input.summary) }
+    if (input.cover !== undefined) { sets.push('cover = ?'); bindings.push(input.cover) }
     if (input.content !== undefined) { sets.push('content = ?'); bindings.push(input.content) }
     if (input.readingTime !== undefined) {
       sets.push('reading_time = ?')

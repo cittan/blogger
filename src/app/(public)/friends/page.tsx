@@ -1,5 +1,6 @@
 'use client'
 
+import { getCoverSrc } from "@/utils/image"
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useFriends } from '@/hooks/useApi'
@@ -35,7 +36,7 @@ export default function FriendsPage() {
               <Card padding="sm" hover className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-text-secondary/10 flex-shrink-0 flex items-center justify-center text-xs text-text-secondary/40 overflow-hidden">
                   {friend.avatar ? (
-                    <img src={friend.avatar} alt={friend.name} className="w-full h-full object-cover" />
+                    <img src={getCoverSrc(friend.avatar) ?? undefined} alt={friend.name} className="w-full h-full object-cover" />
                   ) : (
                     friend.name[0]
                   )}

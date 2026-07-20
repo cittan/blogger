@@ -48,6 +48,7 @@ export interface WikiPage {
   id: number
   title: string
   slug: string
+  cover: string
   category: string
   content: string
   createdAt: string
@@ -65,6 +66,7 @@ export interface Essay {
   title: string
   slug: string
   summary: string
+  cover: string
   content: string
   readingTime: number
   isPublished: boolean

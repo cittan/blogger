@@ -12,6 +12,7 @@ export class EssaysService {
     title: string
     slug: string
     summary?: string
+    cover?: string
     content: string
   }) {
     return this.repo.create({
@@ -22,7 +23,7 @@ export class EssaysService {
   }
   async updateEssay(
     slug: string,
-    input: { title?: string; summary?: string; content?: string; isPublished?: boolean }
+    input: { title?: string; summary?: string; cover?: string; content?: string; isPublished?: boolean }
   ) {
     const data: any = { ...input }
     if (input.content) data.readingTime = calculateReadingTime(input.content)

@@ -24,7 +24,7 @@ export class WikiRepository {
   async getPage(category: string, slug: string): Promise<WikiPage | null> {
     return this.db
       .prepare(
-        `SELECT id, title, slug, category, content,
+        `SELECT id, title, slug, cover, category, content,
          created_at as createdAt, updated_at as updatedAt
          FROM wiki_pages WHERE category = ? AND slug = ?`
       )
@@ -35,14 +35,15 @@ export class WikiRepository {
   async create(input: {
     title: string
     slug: string
+    cover?: string
     category: string
     content: string
   }): Promise<number> {
     const result = await this.db
       .prepare(
-        'INSERT INTO wiki_pages (title, slug, category, content) VALUES (?, ?, ?, ?)'
+        'INSERT INTO wiki_pages (title, slug, cover, category, content) VALUES (?, ?, ?, ?, ?)'
       )
-      .bind(input.title, input.slug, input.category, input.content)
+      .bind(input.title, input.slug, input.cover ?? '', input.category, input.content)
       .run()
     return (result.meta as any).last_row_id
   }
@@ -50,11 +51,12 @@ export class WikiRepository {
   async update(
     category: string,
     slug: string,
-    input: { title?: string; content?: string }
+    input: { title?: string; cover?: string; content?: string }
   ): Promise<void> {
     const sets: string[] = []
     const bindings: any[] = []
     if (input.title !== undefined) { sets.push('title = ?'); bindings.push(input.title) }
+    if (input.cover !== undefined) { sets.push('cover = ?'); bindings.push(input.cover) }
     if (input.content !== undefined) { sets.push('content = ?'); bindings.push(input.content) }
     if (sets.length === 0) return
     sets.push("updated_at = datetime('now')")

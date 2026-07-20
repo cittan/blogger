@@ -4,6 +4,7 @@ import { PostNav } from '@/components/blog/PostNav'
 import { Tag } from '@/components/ui/Tag'
 import { Divider } from '@/components/ui/Divider'
 import { formatDateWithDot } from '@/utils/date'
+import { getCoverSrc } from '@/utils/image'
 import { getDB } from '@/server/db'
 import { PostsRepository } from '@/server/repositories/posts'
 import type { Post } from '@/types'
@@ -47,6 +48,7 @@ export default async function PostPage({ params }: Props) {
     )
   }
 
+  const coverSrc = getCoverSrc(post.cover)
   return (
     <>
       <ProgressBar />
@@ -64,6 +66,8 @@ export default async function PostPage({ params }: Props) {
             ))}
           </div>
         </header>
+
+        {coverSrc&&(<img src={coverSrc} alt={post.title} className="w-full rounded-journal mb-10 object-cover max-h-96"/>)}
 
         <MarkdownRenderer content={post.content} />
 

@@ -1,29 +1,10 @@
 import { Card } from '@/components/ui/Card'
 import { Tag } from '@/components/ui/Tag'
 import { formatDateWithDot } from '@/utils/date'
+import { getCoverSrc } from '@/utils/image'
 import type { PostListItem } from '@/types'
 import Link from 'next/link'
 import { useState } from 'react'
-
-/**
- * 构造封面图 src：
- * - 空字符串 → null（显示占位符）
- * - 完整 URL → 直接使用（兼容旧数据）
- * - R2 key → 通过 /api/v1/images/ 代理
- */
-function getCoverSrc(cover: string): string | null {
-  if (!cover) return null
-  if (cover.startsWith('http')) return cover
-  // 已经是 ?key= 格式 → 直接使用
-  if (cover.startsWith('/api/') && cover.includes('?key=')) return cover
-  // 旧格式 /api/v1/images/xxx → 转成 ?key=xxx
-  if (cover.startsWith('/api/v1/images/')) {
-    const key = cover.slice('/api/v1/images/'.length)
-    return `/api/v1/images?key=${encodeURIComponent(key)}`
-  }
-  // 纯 R2 key → 拼接
-  return `/api/v1/images?key=${encodeURIComponent(cover)}`
-}
 
 function PostCover({ cover, title }: { cover: string; title: string }) {
   const [error, setError] = useState(false)

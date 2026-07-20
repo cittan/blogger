@@ -5,6 +5,7 @@ import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { ProgressBar } from '@/components/blog/ProgressBar'
 import { Divider } from '@/components/ui/Divider'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { getCoverSrc } from "@/utils/image"
 import { formatDateWithDot } from '@/utils/date'
 import { useEssay } from '@/hooks/useApi'
 
@@ -44,6 +45,7 @@ export default function EssayPage({ params }: { params: Promise<{ slug: string }
             <span>{essay.readingTime} min read</span>
           </div>
         </header>
+        {getCoverSrc(essay.cover) && <img src={getCoverSrc(essay.cover)!} alt={essay.title} className="w-full rounded-journal mb-10 object-cover max-h-96" />}
         <MarkdownRenderer content={essay.content} />
         <Divider />
       </article>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAnimeList } from '@/hooks/useApi'
+import { getCoverSrc } from "@/utils/image"
 import { Card } from '@/components/ui/Card'
 import { cn } from '@/utils/cn'
 import type { Anime } from '@/types'
@@ -99,9 +100,9 @@ export default function AnimePage() {
                             const progressPct = item.totalEpisodes > 0 ? (item.progress / item.totalEpisodes) * 100 : 0
                             return (
                               <Card key={item.id} padding="md" hover className="flex gap-4">
-                                <div className="w-12 h-16 rounded overflow-hidden bg-text-secondary/10 flex-shrink-0 flex items-center justify-center text-xs text-text-secondary/40">
+                                <div className="w-16 h-24 rounded overflow-hidden bg-text-secondary/10 flex-shrink-0 flex items-center justify-center text-xs text-text-secondary/40">
                                   {item.cover ? (
-                                    <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
+                                    <img src={getCoverSrc(item.cover) ?? undefined} alt={item.title} className="w-full h-full object-cover" />
                                   ) : (
                                     '封面'
                                   )}
@@ -126,6 +127,7 @@ export default function AnimePage() {
                                     />
                                   </div>
                                 </div>
+                                {item.notes && <p className="text-xs italic mt-2" style={{ color: "#d4745c" }}>" {item.notes}"</p>}
                               </Card>
                             )
                           })}
