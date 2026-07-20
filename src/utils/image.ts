@@ -6,6 +6,10 @@
  * - /api/v1/images/xxx → 转为 ?key=xxx（旧 catch-all 格式兼容）
  * - 纯 key → 拼接 /api/v1/images?key=xxx
  */
+function cleanKey(raw: string): string {
+  return raw.startsWith('/') ? raw.slice(1) : raw
+}
+
 export function getCoverSrc(cover: string): string | null {
   if (!cover) return null
   if (cover.startsWith('http')) return cover
@@ -13,9 +17,9 @@ export function getCoverSrc(cover: string): string | null {
   if (cover.startsWith('/api/') && cover.includes('?key=')) return cover
   // 旧 catch-all 格式 /api/v1/images/xxx → 转 ?key=xxx
   if (cover.startsWith('/api/v1/images/')) {
-    const key = cover.slice('/api/v1/images/'.length)
+    const key = cleanKey(cover.slice('/api/v1/images/'.length))
     return `/api/v1/images?key=${encodeURIComponent(key)}`
   }
   // 纯 R2 key
-  return `/api/v1/images?key=${encodeURIComponent(cover)}`
+  return `/api/v1/images?key=${encodeURIComponent(cleanKey(cover))}`
 }

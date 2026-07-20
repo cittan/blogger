@@ -117,7 +117,7 @@ export default function AnimePage() {
                                       {item.progress}/{item.totalEpisodes || '?'}
                                     </span>
                                   </div>
-                                  <div className="h-1 bg-text-secondary/10 rounded-full overflow-hidden">
+                                  <div className="w-full h-1 bg-text-secondary/10 rounded-full overflow-hidden">
                                     <div
                                       className="h-full rounded-full transition-all"
                                       style={{
@@ -126,8 +126,8 @@ export default function AnimePage() {
                                       }}
                                     />
                                   </div>
-                                </div>
                                 {item.notes && <p className="text-xs italic mt-2" style={{ color: "#d4745c" }}>&ldquo;{item.notes}&rdquo;</p>}
+                                </div>
                               </Card>
                             )
                           })}
