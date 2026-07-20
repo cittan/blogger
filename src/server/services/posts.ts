@@ -15,8 +15,11 @@ export class PostsService {
   }
 
   async getPost(slug: string) {
-    await this.repo.incrementViews(slug).catch(() => {})
-    return this.repo.getBySlug(slug)
+    const post = await this.repo.getBySlug(slug)
+    if (post) {
+      this.repo.incrementViews(slug).catch(() => {})
+    }
+    return post
   }
 
   async createPost(input: {
