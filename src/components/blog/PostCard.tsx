@@ -3,6 +3,7 @@ import { Tag } from '@/components/ui/Tag'
 import { formatDateWithDot } from '@/utils/date'
 import type { PostListItem } from '@/types'
 import Link from 'next/link'
+import { useState } from 'react'
 
 /**
  * 构造封面图 src：
@@ -16,26 +17,37 @@ function getCoverSrc(cover: string): string | null {
   return `/api/v1/images/${cover}`
 }
 
+function PostCover({ cover, title }: { cover: string; title: string }) {
+  const [error, setError] = useState(false)
+  const coverSrc = getCoverSrc(cover)
+
+  if (!coverSrc || error) {
+    return (
+      <div className="w-full aspect-[4/3] bg-gradient-to-br from-accent-red/15 to-accent-amber/10 rounded-journal flex items-center justify-center">
+        <span className="text-text-secondary/20 text-2xl font-serif">c</span>
+      </div>
+    )
+  }
+
+  return (
+    <img
+      src={coverSrc}
+      alt={title}
+      className="w-full aspect-[4/3] object-cover rounded-journal"
+      onError={() => setError(true)}
+    />
+  )
+}
+
 export function PostCard({ post }: { post: PostListItem }) {
-  const coverSrc = getCoverSrc(post.cover)
 
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <Card hover padding="md" className="transition-all duration-300 group-hover:translate-x-1">
         <div className="flex flex-col sm:flex-row gap-5">
-          {/* 左侧 1/3：封面图 */}
+          {/* 左侧 1/3：封面图，加载失败自动降级为占位符 */}
           <div className="sm:w-1/3 shrink-0">
-            {coverSrc ? (
-              <img
-                src={coverSrc}
-                alt={post.title}
-                className="w-full aspect-[4/3] object-cover rounded-journal"
-              />
-            ) : (
-              <div className="w-full aspect-[4/3] bg-gradient-to-br from-accent-red/15 to-accent-amber/10 rounded-journal flex items-center justify-center">
-                <span className="text-text-secondary/20 text-2xl font-serif">c</span>
-              </div>
-            )}
+            <PostCover cover={post.cover} title={post.title} />
           </div>
 
           {/* 右侧 2/3：标题 + 摘要 + 标签 + 元数据 */}
