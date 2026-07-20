@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useCursorEffect } from '@/hooks/useCursorEffect'
 
@@ -33,6 +33,7 @@ export function EntryPage() {
   const avatarRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLHeadingElement>(null)
   const taglineRef = useRef<HTMLParagraphElement>(null)
+  const [imgError, setImgError] = useState(false)
 
   useCursorEffect([
     { ref: avatarRef, factor: 14 },
@@ -64,12 +65,19 @@ export function EntryPage() {
                 '0 0 60px rgba(212, 116, 92, 0.25), 0 0 120px rgba(212, 116, 92, 0.10)',
             }}
           >
-            {/* Avatar image — 通过 R2 binding 代理，无需配置公开域名 */}
-            <img
-              src="/api/v1/images/blogger/avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
-              alt="cittan"
-              className="w-full h-full object-cover"
-            />
+            {/* Avatar — R2 图片，加载失败降级为占位符 */}
+            {imgError ? (
+              <div className="w-full h-full bg-gradient-to-br from-accent-red/35 to-accent-amber/25 flex items-center justify-center">
+                <span className="text-5xl text-text-primary/60 avatar-letter-reveal">c</span>
+              </div>
+            ) : (
+              <img
+                src="/api/v1/images/blogger/avatar/1681626144781ff515610fa5fd34db730dbf3d19b3405bbc4.jpg"
+                alt="cittan"
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            )}
 
             {/* 4×4 tile overlay — fragments fly in from 4 directions */}
             <div className="avatar-tile-grid">
