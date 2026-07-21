@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ContextMenu } from './ContextMenu'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { getCoverSrc } from '@/utils/image'
 import type { Anime } from '@/types'
 
 interface AdminAnimeItem extends Anime {}
@@ -132,9 +133,9 @@ export function AdminAnimeList() {
         >
           {/* Cover */}
           <div className="w-12 h-16 shrink-0">
-            {anime.cover ? (
+            {anime.cover && getCoverSrc(anime.cover) ? (
               <img
-                src={anime.cover}
+                src={getCoverSrc(anime.cover)!}
                 alt={anime.title}
                 className="w-full h-full object-cover rounded"
               />
@@ -158,7 +159,8 @@ export function AdminAnimeList() {
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-text-secondary/60">{anime.slug}</span>
               <span className="text-xs text-text-secondary/40">·</span>
-              <div className="w-20 h-1 bg-text-secondary/10 rounded-full overflow-hidden">
+              {/* Progress bar */}
+              <div className="w-24 h-1.5 bg-text-secondary/10 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
@@ -167,6 +169,7 @@ export function AdminAnimeList() {
                   }}
                 />
               </div>
+              {/* Progress controls */}
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => handleProgressChange(anime, -1)}
@@ -175,7 +178,7 @@ export function AdminAnimeList() {
                 >
                   −
                 </button>
-                <span className="text-xs text-text-secondary min-w-[2rem] text-center">
+                <span className="text-xs text-text-secondary min-w-[2.5rem] text-center">
                   {anime.progress} / {anime.totalEpisodes}
                 </span>
                 <button
@@ -187,6 +190,7 @@ export function AdminAnimeList() {
                 </button>
               </div>
               <span className="text-xs text-text-secondary/40">·</span>
+              {/* Rating stars */}
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => {
                   const starValue = (i + 1) * 2
