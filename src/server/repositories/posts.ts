@@ -232,6 +232,7 @@ export class PostsRepository {
     slug: string,
     input: Partial<{
       title: string
+      slug: string
       summary: string
       content: string
       cover: string
@@ -248,6 +249,10 @@ export class PostsRepository {
     if (input.title !== undefined) {
       sets.push('title = ?')
       bindings.push(input.title)
+    }
+    if (input.slug !== undefined) {
+      sets.push('slug = ?')
+      bindings.push(input.slug)
     }
     if (input.summary !== undefined) {
       sets.push('summary = ?')
@@ -294,7 +299,7 @@ export class PostsRepository {
     if (input.tags !== undefined) {
       const post = await this.db
         .prepare('SELECT id FROM posts WHERE slug = ?')
-        .bind(slug)
+        .bind(input.slug ?? slug)
         .first<{ id: number }>()
       if (post) {
         await this.db.prepare('DELETE FROM post_tags WHERE post_id = ?').bind(post.id).run()

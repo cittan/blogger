@@ -46,7 +46,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
       await fetch('/api/v1/admin/posts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: id, ...data }),
+        body: JSON.stringify({ oldSlug: id, ...data }),
       })
       router.push('/admin/posts')
     } finally {

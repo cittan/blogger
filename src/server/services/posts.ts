@@ -46,6 +46,7 @@ export class PostsService {
     slug: string,
     input: {
       title?: string
+      slug?: string
       summary?: string
       content?: string
       cover?: string

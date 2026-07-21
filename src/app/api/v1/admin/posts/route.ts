@@ -73,11 +73,11 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = (await request.json()) as Record<string, unknown>
-    const slug = body.slug as string | undefined
-    const { slug: _s, ...data } = body
-    if (!slug) {
+    const oldSlug = body.oldSlug as string | undefined
+    const { oldSlug: _os, ...data } = body
+    if (!oldSlug) {
       return NextResponse.json(
-        { success: false, error: { code: 'VALIDATION', message: '缺少 slug' } },
+        { success: false, error: { code: 'VALIDATION', message: '缺少 oldSlug' } },
         { status: 400 }
       )
     }
@@ -88,8 +88,8 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-    await service.updatePost(slug, parsed.data)
-    return NextResponse.json({ success: true, data: { slug } })
+    await service.updatePost(oldSlug, parsed.data)
+    return NextResponse.json({ success: true, data: { slug: parsed.data.slug ?? oldSlug } })
   } catch (error) {
     return NextResponse.json(
       { success: false, error: { code: 'INTERNAL', message: '更新文章失败' } },
