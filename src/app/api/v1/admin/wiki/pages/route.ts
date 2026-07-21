@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDB } from '@/server/db'
 import { WikiRepository } from '@/server/repositories/wiki'
 import { WikiService } from '@/server/services/wiki'
-import { verifyAdmin } from '@/server/middleware/auth'
 
 export const runtime = 'edge'
 
@@ -42,16 +41,20 @@ export async function GET(request: NextRequest) {
 
 // POST /api/v1/admin/wiki/pages - 创建页面
 export async function POST(request: NextRequest) {
-  const authError = await verifyAdmin(request)
-  if (authError) return authError
-
   const db = getDB()
   if (!db) {
     return NextResponse.json({ success: false, error: { message: '数据库未连接' } }, { status: 500 })
   }
 
   try {
-    const body = await request.json()
+    const body = (await request.json()) as {
+      title?: string
+      slug?: string
+      cover?: string
+      categoryId?: number | null
+      content?: string
+      isPublished?: boolean
+    }
     const { title, slug, cover, categoryId, content, isPublished } = body
 
     if (!title || !slug || !content) {

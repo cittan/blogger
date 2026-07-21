@@ -29,7 +29,7 @@ export default function AdminWikiCategoriesPage() {
         body: JSON.stringify(data),
       })
       if (!res.ok) {
-        const json = await res.json()
+        const json = (await res.json()) as { error?: { message?: string } }
         throw new Error(json.error?.message || '创建失败')
       }
       return res.json()
@@ -49,7 +49,7 @@ export default function AdminWikiCategoriesPage() {
         body: JSON.stringify(data),
       })
       if (!res.ok) {
-        const json = await res.json()
+        const json = (await res.json()) as { error?: { message?: string } }
         throw new Error(json.error?.message || '更新失败')
       }
       return res.json()
@@ -67,7 +67,7 @@ export default function AdminWikiCategoriesPage() {
         method: 'DELETE',
       })
       if (!res.ok) {
-        const json = await res.json()
+        const json = (await res.json()) as { error?: { message?: string } }
         throw new Error(json.error?.message || '删除失败')
       }
       return res.json()
@@ -149,7 +149,7 @@ export default function AdminWikiCategoriesPage() {
                   className="w-full px-3 py-2 text-sm bg-bg-secondary border border-border rounded-md text-text-primary"
                 >
                   <option value="">无（顶级分类）</option>
-                  {categories?.map((cat) => (
+                  {categories?.map((cat: WikiCategory) => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>

@@ -48,6 +48,8 @@ export class StatsService {
       totalPosts: totalPosts?.count ?? 0,
       totalAnime: totalAnime?.count ?? 0,
       watchingAnime: watchingAnime?.count ?? 0,
+      totalWikiCategories: totalWikiCategories?.count ?? 0,
+      totalWikiPages: totalWikiPages?.count ?? 0,
       recentPosts: recentPosts.results as any[],
       popularPosts: popularPosts.results as any[],
     }

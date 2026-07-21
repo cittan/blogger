@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
+import type { WikiCategory } from '@/types'
 
 export default function AdminWikiEditPage() {
   const router = useRouter()
@@ -44,7 +45,7 @@ export default function AdminWikiEditPage() {
         body: JSON.stringify(data),
       })
       if (!res.ok) {
-        const json = await res.json()
+        const json = (await res.json()) as { error?: { message?: string } }
         throw new Error(json.error?.message || '更新失败')
       }
       return res.json()
@@ -115,7 +116,7 @@ export default function AdminWikiEditPage() {
                 className="w-full px-3 py-2 text-sm bg-bg-secondary border border-border rounded-md text-text-primary"
               >
                 <option value="">选择分类</option>
-                {categories?.map((cat) => (
+                {categories?.map((cat: WikiCategory) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>

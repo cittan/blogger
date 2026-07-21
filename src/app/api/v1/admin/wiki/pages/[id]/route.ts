@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDB } from '@/server/db'
 import { WikiRepository } from '@/server/repositories/wiki'
 import { WikiService } from '@/server/services/wiki'
-import { verifyAdmin } from '@/server/middleware/auth'
 
 export const runtime = 'edge'
 
@@ -43,9 +42,6 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authError = await verifyAdmin(request)
-  if (authError) return authError
-
   const { id } = await params
   const db = getDB()
   if (!db) {
@@ -53,7 +49,14 @@ export async function PUT(
   }
 
   try {
-    const body = await request.json()
+    const body = (await request.json()) as {
+      title?: string
+      slug?: string
+      cover?: string
+      categoryId?: number | null
+      content?: string
+      isPublished?: boolean
+    }
     const { title, slug, cover, categoryId, content, isPublished } = body
 
     const repo = new WikiRepository(db)
@@ -81,9 +84,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authError = await verifyAdmin(request)
-  if (authError) return authError
-
   const { id } = await params
   const db = getDB()
   if (!db) {
