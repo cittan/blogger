@@ -4,6 +4,8 @@ import { AnimeEditor } from '@/components/dashboard/AnimeEditor'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
+export const runtime = 'edge'
+
 export default function EditAnimePage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
   const [slug, setSlug] = useState<string>('')
