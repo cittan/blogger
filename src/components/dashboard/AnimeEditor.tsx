@@ -19,7 +19,7 @@ const STATUS_OPTIONS = [
 ]
 
 const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: 10 }, (_, i) => CURRENT_YEAR - i)
+const YEARS = Array.from({ length: CURRENT_YEAR - 1970 + 1 }, (_, i) => CURRENT_YEAR - i)
 
 interface AnimeEditorProps {
   initialData?: {
@@ -120,29 +120,43 @@ export function AnimeEditor({ initialData, onSave, isSaving }: AnimeEditorProps)
 
       {/* Year and Season */}
       <div className="flex gap-4">
-        <select
-          value={year}
-          onChange={(e) => setYear(parseInt(e.target.value))}
-          className="flex-1 bg-card border border-text-secondary/10 rounded-journal px-3 py-2 text-sm text-text-secondary outline-none"
-        >
-          {YEARS.map((y) => (
-            <option key={y} value={y}>
-              {y}年
-            </option>
-          ))}
-        </select>
+        <div className="flex-1">
+          <label className="block text-xs text-text-secondary mb-1">年份</label>
+          <div className="h-32 overflow-y-auto bg-card border border-text-secondary/10 rounded-journal">
+            {YEARS.map((y) => (
+              <div
+                key={y}
+                onClick={() => setYear(y)}
+                className={`px-3 py-1.5 text-sm cursor-pointer transition-colors ${
+                  year === y
+                    ? 'bg-accent-red/10 text-accent-red'
+                    : 'text-text-secondary hover:bg-text-secondary/5'
+                }`}
+              >
+                {y}年
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <select
-          value={season}
-          onChange={(e) => setSeason(e.target.value)}
-          className="flex-1 bg-card border border-text-secondary/10 rounded-journal px-3 py-2 text-sm text-text-secondary outline-none"
-        >
-          {SEASONS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+        <div className="flex-1">
+          <label className="block text-xs text-text-secondary mb-1">季度</label>
+          <div className="bg-card border border-text-secondary/10 rounded-journal">
+            {SEASONS.map((s) => (
+              <div
+                key={s.value}
+                onClick={() => setSeason(s.value)}
+                className={`px-3 py-2 text-sm cursor-pointer transition-colors ${
+                  season === s.value
+                    ? 'bg-accent-red/10 text-accent-red'
+                    : 'text-text-secondary hover:bg-text-secondary/5'
+                }`}
+              >
+                {s.label}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Status */}
