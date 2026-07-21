@@ -89,6 +89,8 @@ export interface Friend {
 export interface SiteStats {
   totalViews: number
   totalPosts: number
+  totalAnime: number
+  watchingAnime: number
   recentPosts: PostListItem[]
   popularPosts: PostListItem[]
 }
