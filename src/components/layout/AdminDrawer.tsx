@@ -80,6 +80,14 @@ export function AdminDrawer() {
               {/* Divider */}
               <hr className="border-text-secondary/10 mb-6" />
 
+              {/* Tools section */}
+              <button
+                onClick={() => { setOpen(false); router.push('/toJpg') }}
+                className="w-full px-4 py-2 rounded-journal border border-text-secondary/20 text-text-secondary text-sm hover:text-accent-red hover:border-accent-red/30 transition-colors mb-6 text-left"
+              >
+                WebP → JPG 转换
+              </button>
+
               {/* Admin auth section */}
               <h3 className="text-sm font-bold text-text-primary mb-4">管理员入口</h3>
 
