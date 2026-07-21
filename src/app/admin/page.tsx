@@ -22,7 +22,7 @@ export default function AdminDashboard() {
             <StatsCard title="文章数量" value={stats?.totalPosts ?? 0} subtitle="已发布" />
             <StatsCard title="总浏览量" value={stats?.totalViews ?? 0} />
             <StatsCard title="追番数量" value={stats?.totalAnime ?? 0} subtitle={`在追 ${stats?.watchingAnime ?? 0}`} />
-            <StatsCard title="知识库" value="--" subtitle="个分类" />
+            <StatsCard title="知识库" value={stats?.totalWikiCategories ?? 0} subtitle={`${stats?.totalWikiPages ?? 0} 个页面`} />
           </>
         )}
       </div>

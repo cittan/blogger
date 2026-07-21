@@ -51,16 +51,35 @@ export interface WikiPage {
   title: string
   slug: string
   cover: string
-  category: string
+  categoryId: number
   content: string
+  isPublished: boolean
   createdAt: string
   updatedAt: string
 }
 
+export interface WikiPageListItem {
+  id: number
+  title: string
+  slug: string
+  categoryId: number
+  isPublished: boolean
+  updatedAt: string
+}
+
 export interface WikiCategory {
-  category: string
-  pages: { title: string; slug: string }[]
-  count: number
+  id: number
+  name: string
+  slug: string
+  parentId: number | null
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface WikiCategoryTree extends WikiCategory {
+  children: WikiCategoryTree[]
+  pages: WikiPageListItem[]
 }
 
 export interface Essay {
@@ -91,6 +110,8 @@ export interface SiteStats {
   totalPosts: number
   totalAnime: number
   watchingAnime: number
+  totalWikiCategories: number
+  totalWikiPages: number
   recentPosts: PostListItem[]
   popularPosts: PostListItem[]
 }

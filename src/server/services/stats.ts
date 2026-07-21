@@ -21,6 +21,14 @@ export class StatsService {
       .bind('watching')
       .first<{ count: number }>()
 
+    const totalWikiCategories = await this.db
+      .prepare('SELECT COUNT(*) as count FROM wiki_categories')
+      .first<{ count: number }>()
+
+    const totalWikiPages = await this.db
+      .prepare('SELECT COUNT(*) as count FROM wiki_pages WHERE is_published = 1')
+      .first<{ count: number }>()
+
     const recentPosts = await this.db
       .prepare(
         `SELECT id, title, slug, summary, category, reading_time as readingTime, views, published_at as publishedAt
