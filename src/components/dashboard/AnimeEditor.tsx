@@ -141,7 +141,7 @@ export function AnimeEditor({ initialData, onSave, isSaving }: AnimeEditorProps)
 
         <div className="flex-1">
           <label className="block text-xs text-text-secondary mb-1">季度</label>
-          <div className="bg-card border border-text-secondary/10 rounded-journal">
+          <div className="h-32 overflow-y-auto bg-card border border-text-secondary/10 rounded-journal">
             {SEASONS.map((s) => (
               <div
                 key={s.value}
