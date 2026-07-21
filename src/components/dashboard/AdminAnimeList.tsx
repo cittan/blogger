@@ -158,54 +158,56 @@ export function AdminAnimeList() {
             </div>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs text-text-secondary/60">{anime.slug}</span>
-              <span className="text-xs text-text-secondary/40">·</span>
-              {/* Progress bar */}
-              <div className="w-24 h-1.5 bg-text-secondary/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{
-                    width: `${anime.totalEpisodes > 0 ? (anime.progress / anime.totalEpisodes) * 100 : 0}%`,
-                    backgroundColor: anime.progress >= anime.totalEpisodes && anime.totalEpisodes > 0 ? '#8aaa7a' : '#d4745c',
-                  }}
-                />
-              </div>
-              {/* Progress controls */}
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => handleProgressChange(anime, -1)}
-                  disabled={anime.progress <= 0}
-                  className="w-4 h-4 text-xs text-text-secondary hover:text-accent-red disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  −
-                </button>
-                <span className="text-xs text-text-secondary min-w-[2.5rem] text-center">
-                  {anime.progress} / {anime.totalEpisodes}
-                </span>
-                <button
-                  onClick={() => handleProgressChange(anime, 1)}
-                  disabled={anime.progress >= anime.totalEpisodes}
-                  className="w-4 h-4 text-xs text-text-secondary hover:text-accent-red disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  +
-                </button>
-              </div>
-              <span className="text-xs text-text-secondary/40">·</span>
-              {/* Rating stars */}
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => {
-                  const starValue = (i + 1) * 2
-                  const filled = anime.rating >= starValue
-                  const half = !filled && anime.rating >= starValue - 1
-                  return (
-                    <span
-                      key={i}
-                      className={`text-xs ${filled ? 'text-accent-amber' : half ? 'text-accent-amber/50' : 'text-text-secondary/20'}`}
-                    >
-                      ★
-                    </span>
-                  )
-                })}
-              </div>
+            </div>
+          </div>
+
+          {/* Right side: Progress and Rating */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Progress bar */}
+            <div className="w-24 h-1.5 bg-text-secondary/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${anime.totalEpisodes > 0 ? (anime.progress / anime.totalEpisodes) * 100 : 0}%`,
+                  backgroundColor: anime.progress >= anime.totalEpisodes && anime.totalEpisodes > 0 ? '#8aaa7a' : '#d4745c',
+                }}
+              />
+            </div>
+            {/* Progress controls */}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => handleProgressChange(anime, -1)}
+                disabled={anime.progress <= 0}
+                className="w-4 h-4 text-xs text-text-secondary hover:text-accent-red disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                −
+              </button>
+              <span className="text-xs text-text-secondary min-w-[2.5rem] text-center">
+                {anime.progress} / {anime.totalEpisodes}
+              </span>
+              <button
+                onClick={() => handleProgressChange(anime, 1)}
+                disabled={anime.progress >= anime.totalEpisodes}
+                className="w-4 h-4 text-xs text-text-secondary hover:text-accent-red disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                +
+              </button>
+            </div>
+            {/* Rating stars */}
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const starValue = (i + 1) * 2
+                const filled = anime.rating >= starValue
+                const half = !filled && anime.rating >= starValue - 1
+                return (
+                  <span
+                    key={i}
+                    className={`text-xs ${filled ? 'text-accent-amber' : half ? 'text-accent-amber/50' : 'text-text-secondary/20'}`}
+                  >
+                    ★
+                  </span>
+                )
+              })}
             </div>
           </div>
         </div>
