@@ -138,7 +138,7 @@ export default function AdminWikiNewPage() {
               <select
                 value={formData.categoryId ?? ''}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value ? parseInt(e.target.value) : null })}
-                className="w-full px-3 py-2 text-sm bg-transparent border border-accent-teal/50 rounded-md text-text-primary"
+                className="w-full bg-card border border-text-secondary/10 rounded-journal px-3 py-2 text-sm text-text-secondary outline-none"
               >
                 <option value="">选择分类</option>
                 {categories?.map((cat: WikiCategory) => (
