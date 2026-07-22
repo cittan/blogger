@@ -1,4 +1,5 @@
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
+import { FloatingActions } from '@/components/blog/FloatingActions'
 import { ProgressBar } from '@/components/blog/ProgressBar'
 import { PostNav } from '@/components/blog/PostNav'
 import { Tag } from '@/components/ui/Tag'
@@ -88,6 +89,7 @@ export default async function PostPage({ params }: Props) {
         <Divider />
         <PostNav />
       </article>
+      <FloatingActions />
     </>
   )
 }

@@ -17,7 +17,9 @@ export default function NewPostPage() {
         body: JSON.stringify(data),
       })
       if (res.ok) {
-        router.push('/admin/posts')
+        if (data.isPublished) {
+          router.push('/admin/posts')
+        }
       }
     } finally {
       setIsSaving(false)

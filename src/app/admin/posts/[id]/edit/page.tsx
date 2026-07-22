@@ -43,12 +43,14 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const handleSave = async (data: any) => {
     setIsSaving(true)
     try {
-      await fetch('/api/v1/admin/posts', {
+      const res = await fetch('/api/v1/admin/posts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ oldSlug: id, ...data }),
       })
-      router.push('/admin/posts')
+      if (res.ok && data.isPublished) {
+        router.push('/admin/posts')
+      }
     } finally {
       setIsSaving(false)
     }

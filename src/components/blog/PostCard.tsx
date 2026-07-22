@@ -35,7 +35,13 @@ export function PostCard({ post }: { post: PostListItem }) {
 
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
-      <Card hover padding="md" className="transition-all duration-300 group-hover:translate-x-1">
+      <Card hover padding="md" className="relative transition-all duration-300 group-hover:translate-x-1">
+        {/* 置顶标识 */}
+        {post.isPinned && (
+          <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] rounded-full bg-accent-amber/10 text-accent-amber border border-accent-amber/20">
+            📌 置顶
+          </span>
+        )}
         <div className="flex flex-col sm:flex-row gap-5">
           {/* 左侧 1/3：封面图，加载失败自动降级为占位符 */}
           <div className="sm:w-1/3 shrink-0">
