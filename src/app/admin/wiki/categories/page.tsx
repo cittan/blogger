@@ -146,7 +146,7 @@ export default function AdminWikiCategoriesPage() {
                 <select
                   value={formData.parentId ?? ''}
                   onChange={(e) => setFormData({ ...formData, parentId: e.target.value ? parseInt(e.target.value) : null })}
-                  className="w-full px-3 py-2 text-sm bg-bg-secondary border border-border rounded-md text-text-primary"
+                  className="w-full px-3 py-2 text-sm bg-transparent border border-accent-teal/50 rounded-md text-text-primary"
                 >
                   <option value="">无（顶级分类）</option>
                   {categories?.map((cat: WikiCategory) => (
@@ -173,7 +173,7 @@ export default function AdminWikiCategoriesPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {categories?.map((category) => (
+          {categories?.map((category: WikiCategory) => (
             <Card key={category.id} padding="sm">
               <div className="flex items-center justify-between">
                 <div>

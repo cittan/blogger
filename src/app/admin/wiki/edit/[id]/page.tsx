@@ -166,7 +166,7 @@ export default function AdminWikiEditPage() {
               <select
                 value={formData.categoryId ?? ''}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value ? parseInt(e.target.value) : null })}
-                className="w-full px-3 py-2 text-sm bg-transparent border border-border rounded-md text-text-primary"
+                className="w-full px-3 py-2 text-sm bg-transparent border border-accent-teal/50 rounded-md text-text-primary"
               >
                 <option value="">选择分类</option>
                 {categories?.map((cat: WikiCategory) => (

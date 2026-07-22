@@ -59,7 +59,7 @@ export default function AdminWikiPagesPage() {
             <select
               value={selectedCategory ?? ''}
               onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : undefined)}
-              className="w-full px-3 py-2 text-sm bg-transparent border border-border rounded-md text-text-primary"
+              className="w-full px-3 py-2 text-sm bg-transparent border border-accent-teal/50 rounded-md text-text-primary"
             >
               <option value="">全部分类</option>
               {categories?.map((cat: WikiCategory) => (
