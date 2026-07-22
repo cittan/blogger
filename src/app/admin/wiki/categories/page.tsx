@@ -146,7 +146,7 @@ export default function AdminWikiCategoriesPage() {
                 <select
                   value={formData.parentId ?? ''}
                   onChange={(e) => setFormData({ ...formData, parentId: e.target.value ? parseInt(e.target.value) : null })}
-                  className="w-full bg-card border border-text-secondary/10 rounded-journal px-3 py-2 text-sm text-text-secondary outline-none"
+                  className="w-full bg-transparent border border-text-secondary/10 rounded-journal px-3 py-2 text-sm text-text-secondary outline-none"
                 >
                   <option value="">无（顶级分类）</option>
                   {categories?.map((cat: WikiCategory) => (
