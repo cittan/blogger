@@ -14,15 +14,15 @@ export default function AdminDashboard() {
     <div>
       <h1 className="text-xl font-bold text-text-primary mb-6">仪表盘</h1>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
         {isLoading ? (
-          Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)
+          Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24" />)
         ) : (
           <>
             <StatsCard title="文章数量" value={stats?.totalPosts ?? 0} subtitle="已发布" />
             <StatsCard title="总浏览量" value={stats?.totalViews ?? 0} />
             <StatsCard title="追番数量" value={stats?.totalAnime ?? 0} subtitle={`在追 ${stats?.watchingAnime ?? 0}`} />
-            <StatsCard title="知识库" value={stats?.totalWikiCategories ?? 0} subtitle={`${stats?.totalWikiPages ?? 0} 个页面`} />
+            
           </>
         )}
       </div>

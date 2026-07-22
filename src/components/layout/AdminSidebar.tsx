@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 const ADMIN_NAV = [
   { href: '/admin', label: '仪表盘', icon: '◫' },
   { href: '/admin/posts', label: '文章管理', icon: '☷' },
-  { href: '/admin/wiki', label: '知识库', icon: '☰' },
   { href: '/admin/anime', label: '追番管理', icon: '▶' },
   { href: '/admin/media', label: '媒体库', icon: '▣' },
 ]

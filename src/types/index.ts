@@ -46,42 +46,6 @@ export interface Anime {
   updatedAt: string
 }
 
-export interface WikiPage {
-  id: number
-  title: string
-  slug: string
-  cover: string
-  categoryId: number
-  content: string
-  isPublished: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-export interface WikiPageListItem {
-  id: number
-  title: string
-  slug: string
-  categoryId: number
-  isPublished: boolean
-  updatedAt: string
-}
-
-export interface WikiCategory {
-  id: number
-  name: string
-  slug: string
-  parentId: number | null
-  sortOrder: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface WikiCategoryTree extends WikiCategory {
-  children: WikiCategoryTree[]
-  pages: WikiPageListItem[]
-}
-
 export interface Essay {
   id: number
   title: string
@@ -110,8 +74,6 @@ export interface SiteStats {
   totalPosts: number
   totalAnime: number
   watchingAnime: number
-  totalWikiCategories: number
-  totalWikiPages: number
   recentPosts: PostListItem[]
   popularPosts: PostListItem[]
 }

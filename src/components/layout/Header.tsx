@@ -8,7 +8,6 @@ import { AdminDrawer } from './AdminDrawer'
 
 const NAV_ITEMS = [
   { href: '/blog', label: '博客' },
-  { href: '/wiki', label: '知识库' },
   { href: '/anime', label: '追番' },
   { href: '/essays', label: '杂谈' },
   { href: '/friends', label: '友链' },

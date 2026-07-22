@@ -100,20 +100,7 @@ export function AdminDrawer() {
                   >
                     进入管理后台
                   </button>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => { setOpen(false); router.push('/admin/wiki') }}
-                      className="flex-1 px-3 py-2 rounded-journal border border-text-secondary/20 text-text-secondary text-xs hover:text-text-primary transition-colors"
-                    >
-                      Wiki 页面
-                    </button>
-                    <button
-                      onClick={() => { setOpen(false); router.push('/admin/wiki/categories') }}
-                      className="flex-1 px-3 py-2 rounded-journal border border-text-secondary/20 text-text-secondary text-xs hover:text-text-primary transition-colors"
-                    >
-                      Wiki 分类
-                    </button>
-                  </div>
+                  
                   <button
                     onClick={() => { logout(); setSecret('') }}
                     className="w-full px-4 py-2 rounded-journal border border-text-secondary/20 text-text-secondary text-sm hover:text-text-primary transition-colors"
