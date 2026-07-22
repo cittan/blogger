@@ -1,13 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
+import dynamic from 'next/dynamic'
 import { useAdminWikiCategories } from '@/hooks/useApi'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import type { WikiCategory } from '@/types'
+import type { MDEditorProps } from '@uiw/react-md-editor'
+
+import '@uiw/react-md-editor/markdown-editor.css'
+import '@uiw/react-markdown-preview/markdown.css'
+
+const MDEditor = dynamic<MDEditorProps>(
+  () => import('@uiw/react-md-editor').then((mod) => mod.default),
+  { ssr: false },
+)
 
 export default function AdminWikiNewPage() {
   const router = useRouter()
@@ -19,6 +29,10 @@ export default function AdminWikiNewPage() {
     content: '',
     isPublished: false,
   })
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
+  const [imageCopied, setImageCopied] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -49,6 +63,43 @@ export default function AdminWikiNewPage() {
 
   const handlePublish = () => {
     createMutation.mutate({ ...formData, isPublished: true })
+  }
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    setImageUrl('')
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('category', 'wiki')
+
+    try {
+      const res = await fetch('/api/v1/admin/upload', { method: 'POST', body: formData })
+      const json = (await res.json()) as { success: boolean; data?: { files: { key: string; url: string }[] } }
+      if (json.success && json.data?.files?.[0]) {
+        const url = json.data.files[0].url
+        setImageUrl(url)
+        const mdImage = `![图片](${url})`
+        setFormData((prev) => {
+          const trimmed = prev.content.endsWith('\n') ? prev.content : prev.content + '\n'
+          return { ...prev, content: trimmed + mdImage + '\n' }
+        })
+      }
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const handleCopyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(`![图片](${url})`)
+      setImageCopied(true)
+      setTimeout(() => setImageCopied(false), 2000)
+    } catch {
+      // fallback
+    }
   }
 
   return (
@@ -100,14 +151,49 @@ export default function AdminWikiNewPage() {
 
         <Card padding="md">
           <label className="block text-xs text-text-secondary mb-2">内容（Markdown）</label>
-          <textarea
-            value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            placeholder="在此输入 Markdown 内容..."
-            rows={20}
-            className="w-full px-3 py-2 text-sm bg-bg-secondary border border-border rounded-md text-text-primary font-mono"
-            required
-          />
+          {/* Image upload toolbar */}
+          <div className="flex items-center gap-3 flex-wrap mb-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleUploadImage}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingImage}
+              className="px-3 py-1.5 text-xs rounded-journal border border-text-secondary/20 text-text-secondary hover:text-accent-red hover:border-accent-red transition-colors"
+            >
+              {uploadingImage ? '上传中...' : '📷 插入图片'}
+            </button>
+            {imageUrl && (
+              <span className="flex items-center gap-2 text-xs text-accent-green">
+                ✓ 已插入
+                <button
+                  type="button"
+                  onClick={() => handleCopyUrl(imageUrl)}
+                  className="text-text-secondary hover:text-text-primary underline"
+                >
+                  {imageCopied ? '已复制!' : '复制链接'}
+                </button>
+              </span>
+            )}
+          </div>
+          {/* Markdown Editor */}
+          <div data-color-mode="dark">
+            <MDEditor
+              value={formData.content}
+              onChange={(val) => setFormData({ ...formData, content: val ?? '' })}
+              height={500}
+              preview="live"
+              visibleDragbar={false}
+              textareaProps={{
+                placeholder: '开始写 Markdown...',
+              }}
+            />
+          </div>
         </Card>
       </form>
     </div>
